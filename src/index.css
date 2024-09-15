@@ -1,0 +1,46 @@
+/* src/index.css or src/tailwind.css */
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+@keyframes slide-up {
+    0% {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-slide-up {
+    animation: slide-up 1s ease-in-out forwards;
+}
+@keyframes glow {
+    0%, 100% {
+        box-shadow: 0 0 8px rgba(0, 112, 244, 0.6);
+    }
+    50% {
+        box-shadow: 0 0 15px rgba(0, 112, 244, 0.8);
+    }
+}
+
+.hover:before:animate-glow {
+    animation: glow 1s infinite alternate;
+}
+
+@keyframes glow {
+    0%, 100% {
+        text-shadow: 0 0 5px #fff, 0 0 10px #00f, 0 0 15px #00f, 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff, 0 0 50px #0ff;
+        color: #fff;
+    }
+    50% {
+        text-shadow: 0 0 10px #fff, 0 0 20px #00f, 0 0 30px #00f, 0 0 40px #0ff, 0 0 50px #0ff, 0 0 60px #0ff, 0 0 70px #0ff;
+        color: #00f;
+    }
+}
+
+/* Add the class to make sure it's picked up by Tailwind's JIT */
+.hover\\:animate-glow:hover {
+    animation: glow 1s ease-in-out infinite alternate;
+}

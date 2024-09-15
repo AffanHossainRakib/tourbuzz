@@ -1,0 +1,8 @@
+/* src/styles/Footer.css */
+.footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #333;
+    color: white;
+}
