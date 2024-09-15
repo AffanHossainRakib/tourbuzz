@@ -7,20 +7,20 @@ import 'slick-carousel/slick/slick-theme.css';
 // Slider data
 const slides = [
     {
-        image: '/assets/slider1.png',
+        image: '/assets/sliders/slider1.jpg',
         title: 'Beach Paradise',
         description: 'Relax and enjoy the beautiful beaches and crystal-clear waters.',
     },
     {
-        image: '/assets/slider2.png',
+        image: '/assets/sliders/slider2.png',
         title: 'Mountain Adventure',
         description: 'Explore the majestic mountains with our guided tours.',
     },
-    // {
-    //     image: '/assets/slider3.jpg',
-    //     title: 'City Lights',
-    //     description: 'Discover the vibrant city life with our exclusive city tours.',
-    // },
+    {
+        image: '/assets/sliders/slider3.jpg',
+        title: 'Jungle Thrills',
+        description: 'Discover the hidden treasures of the jungle with our expert guides.',
+    },
 ];
 
 // Custom Next Arrow Component

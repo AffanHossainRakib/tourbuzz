@@ -1,5 +1,6 @@
 // src/components/SearchBar.js
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { IconLucideSearch } from './IconLucideSearch'; // Adjust the path if it's different
 
 const SearchBar = ({ onOverlayChange }) => {
     const [isOverlayOpen, setOverlayOpen] = useState(false);
@@ -61,16 +62,28 @@ const SearchBar = ({ onOverlayChange }) => {
 
     return (
         <>
-            {/* Main Search Bar */}
-            <div className="flex justify-center mt-8">
-                <input
-                    type="text"
-                    placeholder="Search for tours..."
-                    className="w-1/2 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
-                    onFocus={handleOpenOverlay}
-                    value={searchQuery}
-                    onChange={handleSearchChange}
-                />
+            {/* Header Title */}
+            <div className="flex flex-col items-center mt-8">
+                <h2 className="text-3xl font-bold text-white mb-4">
+                    Find Your Perfect Tour !
+                </h2>
+                
+                {/* Main Search Bar */}
+                <div className="relative w-3/4 md:w-1/2 flex items-center">
+                    <input
+                        type="text"
+                        placeholder="Search for tours..."
+                        className="w-full px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 pr-10 glow-input" // Added glow-input class
+                        onFocus={handleOpenOverlay}
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                    />
+                    <IconLucideSearch 
+                        className="absolute right-4 text-gray-500 cursor-pointer" 
+                        width="1.5em" 
+                        height="1.5em"
+                    />
+                </div>
             </div>
 
             {/* Overlay for Expanded Search */}

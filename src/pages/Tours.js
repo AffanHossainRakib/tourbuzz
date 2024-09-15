@@ -28,12 +28,13 @@ const Tours = () => {
     return (
         <div 
             className="relative min-h-screen bg-cover bg-center"
-            style={{ backgroundImage: `url('/assets/tour-background.jpg')` }} // Use the public folder image path
+            style={{ backgroundImage: `url('${process.env.PUBLIC_URL}/assets/tour-background.jpg')` }} // Using PUBLIC_URL for local images
         >
-            {/* Transparent Overlay */}
+            {/* Transparent Layer */}
             <div className="absolute inset-0 bg-black bg-opacity-70"></div>
 
-            <div className="relative flex text-white p-8">
+            {/* Main Content */}
+            <div className="relative z-10 flex text-white p-8">
                 {/* Filters Section */}
                 <Filters filters={filters} handleFilterChange={handleFilterChange} />
 

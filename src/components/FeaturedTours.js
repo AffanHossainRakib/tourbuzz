@@ -7,20 +7,20 @@ const featuredTours = [
     {
         id: 1,
         title: "Beach Paradise",
-        description: "Enjoy a relaxing week at the beautiful beaches of Thailand.",
-        image: "/assets/island.jpg",
+        description: "Enjoy a relaxing week at the beautiful beaches of Cox's Bazar.",
+        image: "/assets/featured/cox.jpg",
     },
     {
         id: 2,
-        title: "Desert Adventure",
-        description: "Explore the majestic deserts and enjoy adventurous activities.",
-        image: "/assets/desert.jpg",
+        title: "Mountain Adventure",
+        description: "Embark on an exciting journey to the mountains of Sajek Valley.",
+        image: "/assets/featured/sajek.jpg",
     },
     {
         id: 3,
-        title: "Lake Adventure",
-        description: "Discover the lake with our exclusive lake tours.",
-        image: "/assets/lake.jpg",
+        title: "Jungle Safari",
+        description: "Discover the hidden treasures of the Sundarbans with our expert guides.",
+        image: "/assets/featured/sundarbans.png",
     },
 ];
 

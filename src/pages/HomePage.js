@@ -14,15 +14,23 @@ const HomePage = () => {
     };
 
     return (
-        <div className="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700 text-white min-h-screen flex flex-col">
-            {!isOverlayOpen && <Navbar />} {/* Hide Navbar if overlay is open */}
-            <main className="flex-grow pt-16">
-                <CarouselSlider />
-                <SearchBar onOverlayChange={handleOverlayChange} />
-                <FeaturedTours />
-                
-            </main>
-            <Footer />
+        <div 
+            className="relative min-h-screen bg-cover bg-center text-white flex flex-col"
+            style={{ backgroundImage: `url('${process.env.PUBLIC_URL}/assets/tour-background.jpg')` }} // Background Image
+        >
+            {/* Transparent Layer */}
+            <div className="absolute inset-0 bg-black bg-opacity-70"></div>
+
+            {/* Main Content */}
+            <div className="relative z-10 flex flex-col">
+                {!isOverlayOpen && <Navbar />} {/* Hide Navbar if overlay is open */}
+                <main className="flex-grow pt-16">
+                    <CarouselSlider />
+                    <SearchBar onOverlayChange={handleOverlayChange} />
+                    <FeaturedTours />
+                </main>
+                <Footer />
+            </div>
         </div>
     );
 }
