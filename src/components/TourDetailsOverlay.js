@@ -1,7 +1,15 @@
 // src/components/TourDetailsOverlay.js
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const TourDetailsOverlay = ({ tour, onClose }) => {
+    const navigate = useNavigate();
+
+    const handleBookNow = () => {
+        // Navigate to the payment page with tour details
+        navigate('/payment', { state: { tour } });
+    };
+
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50">
             <div 
@@ -12,14 +20,17 @@ const TourDetailsOverlay = ({ tour, onClose }) => {
                 <img src={tour.image} alt={tour.title} className="w-full h-64 object-cover rounded-lg mb-4" />
                 <h2 className="text-2xl font-bold mb-4 text-left">{tour.title}</h2>
                 <p className="mb-4 text-left">{tour.fullDescription}</p>
-                <div className="text-left space-y-2"> {/* Wrapper div for alignment */}
+                <div className="text-left space-y-2">
                     <p><strong>Location:</strong> {tour.location}</p>
                     <p><strong>Price:</strong> ${tour.price}</p>
                     <p><strong>Seats Available:</strong> {tour.availableSeats}</p>
                     <p><strong>Start Date:</strong> {tour.startDate}</p>
                     <p><strong>End Date:</strong> {tour.endDate}</p>
                 </div>
-                <button className="sticky bottom-0 w-full mt-4 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-all duration-300">
+                <button 
+                    className="sticky bottom-0 w-full mt-4 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-all duration-300"
+                    onClick={handleBookNow} // Add click handler for booking
+                >
                     Book Now
                 </button>
                 <button 

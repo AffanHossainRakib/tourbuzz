@@ -1,8 +1,10 @@
 // src/components/TourDetailsCard.js
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const TourDetailsCard = ({ tours, onOverlayOpenChange }) => {
     const [selectedTour, setSelectedTour] = useState(null);
+    const navigate = useNavigate(); // Initialize the navigate function
 
     const openTourDetails = (tour) => {
         setSelectedTour(tour);
@@ -12,6 +14,11 @@ const TourDetailsCard = ({ tours, onOverlayOpenChange }) => {
     const closeTourDetails = () => {
         setSelectedTour(null);
         onOverlayOpenChange(false); // Notify parent that overlay is closed
+    };
+
+    const handleBookNow = () => {
+        // Navigate to the payment page with the selected tour data
+        navigate('/payment', { state: { tour: selectedTour } });
     };
 
     return (
@@ -56,7 +63,10 @@ const TourDetailsCard = ({ tours, onOverlayOpenChange }) => {
                         <p><strong>Seats Available:</strong> {selectedTour.availableSeats}</p>
                         <p><strong>Start Date:</strong> {selectedTour.startDate}</p>
                         <p><strong>End Date:</strong> {selectedTour.endDate}</p>
-                        <button className="sticky bottom-0 w-full mt-4 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-all duration-300">
+                        <button 
+                            className="sticky bottom-0 w-full mt-4 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-all duration-300"
+                            onClick={handleBookNow} // Redirect to payment page
+                        >
                             Book Now
                         </button>
                         <button 
