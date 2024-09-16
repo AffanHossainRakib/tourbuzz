@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import Tours from './pages/Tours';
 import LoginSignup from './pages/LoginSignup';
+import ContactUs from './pages/ContactUs';
 import './index.css'; // Import Tailwind styles
 
 function App() {
@@ -13,8 +14,8 @@ function App() {
                 <Routes>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/tours" element={<Tours />} />
-                    <Route path="/login-signup" element={<LoginSignup />} />
-
+                    <Route path="/authentication" element={<LoginSignup />} />
+                    <Route path="/contact-us" element={<ContactUs />} />
                     {/* Add more routes here as needed */}
                 </Routes>
             </div>

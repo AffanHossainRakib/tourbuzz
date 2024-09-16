@@ -20,7 +20,7 @@ const Footer = () => {
                         <div className="grid grid-cols-2 gap-4 w-full text-center"> {/* 2x2 grid layout */}
                             <a href="/" className="bg-blue-700 bg-opacity-90 hover:bg-blue-800 text-white font-semibold py-2 px-4 rounded-full transition duration-300">Home</a>
                             <a href="/tours" className="bg-blue-700 bg-opacity-90 hover:bg-blue-800 text-white font-semibold py-2 px-4 rounded-full transition duration-300">Tours</a>
-                            <a href="/contact" className="bg-blue-700 bg-opacity-90 hover:bg-blue-800 text-white font-semibold py-2 px-4 rounded-full transition duration-300">Contact Us</a>
+                            <a href="/contact-us" className="bg-blue-700 bg-opacity-90 hover:bg-blue-800 text-white font-semibold py-2 px-4 rounded-full transition duration-300">Contact Us</a>
                             <a href="/faqs" className="bg-blue-700 bg-opacity-90 hover:bg-blue-800 text-white font-semibold py-2 px-4 rounded-full transition duration-300">FAQs</a>
                         </div>
                     </div>

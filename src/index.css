@@ -3,35 +3,34 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+/* Apply the 'font-sans' class globally to use 'Poppins' */
+body {
+  font-family: 'Poppins', sans-serif;
+}
 
+/* ----------------------------
+    Custom Animations and Styles
+---------------------------- */
 
+/* Slide Up Animation */
 @keyframes slide-up {
-    0% {
-        opacity: 0;
-        transform: translateY(100%);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-slide-up {
-    animation: slide-up 1s ease-in-out forwards;
-}
-@keyframes glow {
-    0%, 100% {
-        box-shadow: 0 0 8px rgba(0, 112, 244, 0.6);
-    }
-    50% {
-        box-shadow: 0 0 15px rgba(0, 112, 244, 0.8);
-    }
+  animation: slide-up 1s ease-in-out forwards;
 }
 
-.hover:before:animate-glow {
-    animation: glow 1s infinite alternate;
-}
+/* src/index.css or src/tailwind.css */
 
+/* Text Glow Effect on Hover */
 @keyframes glow {
     0%, 100% {
         text-shadow: 0 0 5px #fff, 0 0 10px #00f, 0 0 15px #00f, 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff, 0 0 50px #0ff;
@@ -43,91 +42,73 @@
     }
 }
 
-/* Add the class to make sure it's picked up by Tailwind's JIT */
+/* Apply this class for hover effect */
 .hover\\:animate-glow:hover {
     animation: glow 1s ease-in-out infinite alternate;
 }
 
-/* text above search bar glow */
-/* @keyframes glow {
-    0%, 100% {
-      text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #1CB0EE, 0 0 30px #1CB0EE, 0 0 40px #1CB0EE, 0 0 50px #1CB0EE, 0 0 60px #1CB0EE;
-    }
-    50% {
-      text-shadow: 0 0 10px #fff, 0 0 20px #1CB0EE, 0 0 30px #1CB0EE, 0 0 40px #1CB0EE, 0 0 50px #1CB0EE, 0 0 60px #1CB0EE, 0 0 70px #1CB0EE;
-    }
+
+/* Text Glow Effect */
+@keyframes text-glow {
+  0%, 100% {
+    text-shadow: 0 0 5px #fff, 0 0 10px #00f, 0 0 15px #00f, 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff, 0 0 50px #0ff;
+    color: #fff;
   }
-  
-  .glow-text {
-    @apply text-3xl font-bold text-white mb-4;
-    animation: glow 1.5s infinite alternate;
-  } */
-
-  
-/* search bar glow */
-@keyframes glow {
-    0%, 100% {
-      text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #1CB0EE, 0 0 30px #1CB0EE, 0 0 40px #1CB0EE, 0 0 50px #1CB0EE, 0 0 60px #1CB0EE;
-    }
-    50% {
-      text-shadow: 0 0 10px #fff, 0 0 20px #1CB0EE, 0 0 30px #1CB0EE, 0 0 40px #1CB0EE, 0 0 50px #1CB0EE, 0 0 60px #1CB0EE, 0 0 70px #1CB0EE;
-    }
+  50% {
+    text-shadow: 0 0 10px #fff, 0 0 20px #00f, 0 0 30px #00f, 0 0 40px #0ff, 0 0 50px #0ff, 0 0 60px #0ff, 0 0 70px #0ff;
+    color: #00f;
   }
-  
-  .glow-text {
-    @apply text-3xl font-bold text-white mb-4;
-    animation: glow 1.5s infinite alternate;
+}
+
+/* Applied to elements that need text glow */
+.glow-text {
+  @apply text-3xl font-bold text-white mb-4;
+  animation: text-glow 1.5s infinite alternate;
+}
+
+/* Input Glow Effect */
+@keyframes input-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #1CB0EE, 0 0 30px #1CB0EE, 0 0 40px #1CB0EE;
   }
-  
-  @keyframes input-glow {
-    0%, 100% {
-      box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #1CB0EE, 0 0 30px #1CB0EE, 0 0 40px #1CB0EE;
-    }
-    50% {
-      box-shadow: 0 0 10px #fff, 0 0 20px #1CB0EE, 0 0 30px #1CB0EE, 0 0 40px #1CB0EE, 0 0 50px #1CB0EE;
-    }
+  50% {
+    box-shadow: 0 0 10px #fff, 0 0 20px #1CB0EE, 0 0 30px #1CB0EE, 0 0 40px #1CB0EE, 0 0 50px #1CB0EE;
   }
-  
-  .glow-input {
-    animation: input-glow 1.5s infinite alternate;
-  }
-  
+}
 
-  /* login-signup */
+/* Applied to input fields */
+.glow-input {
+  animation: input-glow 1.5s infinite alternate;
+}
 
-
-
-
-/* index.css */
-
-/* Custom animation for sliding effect */
+/* Slide In Animations for Login/Signup Forms */
 @keyframes slideInRight {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
+  from {
+    transform: translateX(100%);
+    opacity: 0;
   }
-  
-  @keyframes slideInLeft {
-    from {
-      transform: translateX(-100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
+  to {
+    transform: translateX(0);
+    opacity: 1;
   }
-  
-  .slide-in-right {
-    animation: slideInRight 0.5s forwards;
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
   }
-  
-  .slide-in-left {
-    animation: slideInLeft 0.5s forwards;
+  to {
+    transform: translateX(0);
+    opacity: 1;
   }
-  
+}
+
+/* Apply these classes to elements for sliding animations */
+.slide-in-right {
+  animation: slideInRight 0.5s forwards;
+}
+
+.slide-in-left {
+  animation: slideInLeft 0.5s forwards;
+}
