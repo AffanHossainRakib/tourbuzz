@@ -28,25 +28,22 @@ body {
   animation: slide-up 1s ease-in-out forwards;
 }
 
-/* src/index.css or src/tailwind.css */
-
 /* Text Glow Effect on Hover */
 @keyframes glow {
-    0%, 100% {
-        text-shadow: 0 0 5px #fff, 0 0 10px #00f, 0 0 15px #00f, 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff, 0 0 50px #0ff;
-        color: #fff;
-    }
-    50% {
-        text-shadow: 0 0 10px #fff, 0 0 20px #00f, 0 0 30px #00f, 0 0 40px #0ff, 0 0 50px #0ff, 0 0 60px #0ff, 0 0 70px #0ff;
-        color: #00f;
-    }
+  0%, 100% {
+    text-shadow: 0 0 5px #fff, 0 0 10px #00f, 0 0 15px #00f, 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff, 0 0 50px #0ff;
+    color: #fff;
+  }
+  50% {
+    text-shadow: 0 0 10px #fff, 0 0 20px #00f, 0 0 30px #00f, 0 0 40px #0ff, 0 0 50px #0ff, 0 0 60px #0ff, 0 0 70px #0ff;
+    color: #00f;
+  }
 }
 
 /* Apply this class for hover effect */
 .hover\\:animate-glow:hover {
-    animation: glow 1s ease-in-out infinite alternate;
+  animation: glow 1s ease-in-out infinite alternate;
 }
-
 
 /* Text Glow Effect */
 @keyframes text-glow {
@@ -111,4 +108,23 @@ body {
 
 .slide-in-left {
   animation: slideInLeft 0.5s forwards;
+}
+
+/* Backdrop and Overlay Styles for Tour Details */
+.backdrop {
+  @apply fixed inset-0 bg-black bg-opacity-70 z-50 flex justify-center items-center;
+}
+
+.overlay-container {
+  @apply bg-white w-3/4 lg:w-1/2 h-3/4 overflow-auto rounded-lg shadow-lg relative animate-slide-up;
+}
+
+/* Sticky Footer for "Book Now" Button */
+.sticky-footer {
+  @apply sticky bottom-0 bg-white bg-opacity-90 p-4 shadow-lg;
+}
+
+/* Back Button Style */
+.back-button {
+  @apply absolute top-4 left-4 bg-black bg-opacity-70 text-white w-10 h-10 flex items-center justify-center rounded-full hover:bg-opacity-80;
 }
