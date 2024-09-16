@@ -1,7 +1,17 @@
 // src/components/Navbar.js
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const Navbar = () => {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        // Check if user is logged in
+        const user = localStorage.getItem('user');
+        if (user) {
+            setIsLoggedIn(true);
+        }
+    }, []);
+
     const handleRedirect = () => {
         window.location.href = '/'; // Replace with your desired URL
     };
@@ -21,7 +31,11 @@ const Navbar = () => {
             <ul className="flex space-x-8">
                 <li><a href="/" className="text-white hover:text-orange-500">Home</a></li>
                 <li><a href="/tours" className="text-white hover:text-orange-500">Tours</a></li>
-                <li><a href="/authentication" className="text-white hover:text-orange-500">Sign in</a></li>
+                {isLoggedIn ? (
+                    <li><a href="/dashboard" className="text-white hover:text-orange-500">Dashboard</a></li>
+                ) : (
+                    <li><a href="/authentication" className="text-white hover:text-orange-500">Sign in</a></li>
+                )}
                 <li><a href="/contact-us" className="text-white hover:text-orange-500">Contact</a></li>
             </ul>
         </nav>

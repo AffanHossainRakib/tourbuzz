@@ -1,10 +1,51 @@
 import React, { useState } from "react";
 import { FaArrowLeft } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios'; // Import axios for API requests
 
 const LoginSignup = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const navigate = useNavigate(); // Hook to navigate to the previous page
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const navigate = useNavigate();
+
+  // Base URL for the backend server
+  const serverBaseUrl = 'http://localhost:5001';
+
+  // Handle form submission for login
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(`${serverBaseUrl}/Login`, { email, password });
+      if (response.data.success) {
+        // Redirect to dashboard upon successful login
+        navigate('/dashboard');
+      } else {
+        alert(response.data.message || 'Login failed.');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      alert('An error occurred during login.');
+    }
+  };
+
+  // Handle form submission for signup
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(`${serverBaseUrl}/CreateUser`, { name: fullName, email, password });
+      if (response.data.success) {
+        // Redirect to dashboard upon successful signup
+        navigate('/dashboard');
+      } else {
+        alert(response.data.message || 'Signup failed.');
+      }
+    } catch (error) {
+      console.error('Signup error:', error);
+      alert('An error occurred during signup.');
+    }
+  };
 
   return (
     <div 
@@ -49,12 +90,14 @@ const LoginSignup = () => {
                 <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
                   Sign In
                 </h2>
-                <form className="space-y-4">
+                <form className="space-y-4" onSubmit={handleLogin}>
                   <div>
                     <label className="block mb-1 text-gray-700">Email</label>
                     <input
                       type="email"
                       placeholder="Email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                       required
                     />
@@ -64,6 +107,8 @@ const LoginSignup = () => {
                     <input
                       type="password"
                       placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                       required
                     />
@@ -90,12 +135,14 @@ const LoginSignup = () => {
                 <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
                   Sign Up
                 </h2>
-                <form className="space-y-4">
+                <form className="space-y-4" onSubmit={handleSignup}>
                   <div>
                     <label className="block mb-1 text-gray-700">Full Name</label>
                     <input
                       type="text"
                       placeholder="Full Name"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                       required
                     />
@@ -105,6 +152,8 @@ const LoginSignup = () => {
                     <input
                       type="email"
                       placeholder="Email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                       required
                     />
@@ -114,6 +163,8 @@ const LoginSignup = () => {
                     <input
                       type="password"
                       placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                       required
                     />
