@@ -2,6 +2,9 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+
+
+
 @keyframes slide-up {
     0% {
         opacity: 0;
@@ -87,5 +90,44 @@
   
   .glow-input {
     animation: input-glow 1.5s infinite alternate;
+  }
+  
+
+  /* login-signup */
+
+
+
+
+/* index.css */
+
+/* Custom animation for sliding effect */
+@keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideInLeft {
+    from {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  .slide-in-right {
+    animation: slideInRight 0.5s forwards;
+  }
+  
+  .slide-in-left {
+    animation: slideInLeft 0.5s forwards;
   }
   

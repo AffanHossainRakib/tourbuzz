@@ -18,10 +18,10 @@ const Footer = () => {
                     <div className="bg-gray-900 bg-opacity-80 p-4 rounded-lg shadow-md flex flex-col items-center">
                         <h4 className="text-2xl font-semibold mb-4 text-white">Quick Links</h4>
                         <div className="grid grid-cols-2 gap-4 w-full text-center"> {/* 2x2 grid layout */}
-                            <a href="/" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">Home</a>
-                            <a href="/tours" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">Tours</a>
-                            <a href="/contact" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">Contact Us</a>
-                            <a href="/faqs" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">FAQs</a>
+                            <a href="/" className="bg-blue-700 bg-opacity-90 hover:bg-blue-800 text-white font-semibold py-2 px-4 rounded-full transition duration-300">Home</a>
+                            <a href="/tours" className="bg-blue-700 bg-opacity-90 hover:bg-blue-800 text-white font-semibold py-2 px-4 rounded-full transition duration-300">Tours</a>
+                            <a href="/contact" className="bg-blue-700 bg-opacity-90 hover:bg-blue-800 text-white font-semibold py-2 px-4 rounded-full transition duration-300">Contact Us</a>
+                            <a href="/faqs" className="bg-blue-700 bg-opacity-90 hover:bg-blue-800 text-white font-semibold py-2 px-4 rounded-full transition duration-300">FAQs</a>
                         </div>
                     </div>
 

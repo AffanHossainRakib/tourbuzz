@@ -65,7 +65,7 @@ const SearchBar = ({ onOverlayChange }) => {
             {/* Header Title */}
             <div className="flex flex-col items-center mt-8">
                 <h2 className="text-3xl font-bold text-white mb-4">
-                    Find Your Perfect Tour !
+                    Find Your Perfect Tour
                 </h2>
                 
                 {/* Main Search Bar */}

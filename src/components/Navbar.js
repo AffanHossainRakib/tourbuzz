@@ -19,9 +19,9 @@ const Navbar = () => {
                 </span>
             </div>
             <ul className="flex space-x-8">
-                <li><a href="#home" className="text-white hover:text-orange-500">Home</a></li>
-                <li><a href="tours" className="text-white hover:text-orange-500">Tours</a></li>
-                <li><a href="#about" className="text-white hover:text-orange-500">About Us</a></li>
+                <li><a href="/" className="text-white hover:text-orange-500">Home</a></li>
+                <li><a href="/tours" className="text-white hover:text-orange-500">Tours</a></li>
+                <li><a href="/login-signup" className="text-white hover:text-orange-500">Sign in</a></li>
                 <li><a href="#contact" className="text-white hover:text-orange-500">Contact</a></li>
             </ul>
         </nav>
