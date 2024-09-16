@@ -3,7 +3,9 @@ import React from 'react';
 
 const Filters = ({ filters, handleFilterChange }) => {
     return (
-        <div className="w-1/4 p-4 bg-gray-900 bg-opacity-70 text-white rounded-lg mr-6">
+        <div 
+            className="fixed top-32 left-8 w-64 p-4 bg-gray-900 bg-opacity-70 text-white rounded-lg shadow-lg h-auto"
+        >
             <h3 className="text-xl font-semibold mb-4">Filters</h3>
             <div className="mb-4">
                 <label className="block text-gray-300 mb-2">Location</label>
