@@ -1,13 +1,30 @@
 import React, { useState } from "react";
+import { FaArrowLeft } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const LoginSignup = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const navigate = useNavigate(); // Hook to navigate to the previous page
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-400 to-indigo-600">
-      <div className="flex w-full max-w-5xl h-[500px]"> {/* Set fixed height here */}
+    <div 
+      className="flex items-center justify-center min-h-screen relative bg-cover bg-center"
+      style={{ backgroundImage: `url('/assets/pages/auth.jpg')` }} // Set your background image
+    >
+      {/* Transparent Overlay Layer */}
+      <div className="absolute inset-0 bg-black bg-opacity-70"></div>
+
+      {/* Circular Back Button */}
+      <button
+        onClick={() => navigate(-1)} // Go to the previous page
+        className="absolute top-8 left-8 p-3 bg-gray-700 bg-opacity-70 rounded-full text-white hover:bg-opacity-90 transition duration-300 z-20"
+      >
+        <FaArrowLeft size={20} />
+      </button>
+
+      <div className="flex w-full max-w-5xl h-[500px] relative z-10"> {/* Set fixed height here */}
         {/* Left Text Panel */}
-        <div className="w-1/2 p-8 bg-blue-500 bg-opacity-80 backdrop-blur-md rounded-l-lg flex flex-col justify-center items-center relative overflow-hidden h-full"> {/* Ensure full height */}
+        <div className="w-1/2 p-8 bg-gray-800 bg-opacity-90 backdrop-blur-md rounded-l-lg flex flex-col justify-center items-center relative overflow-hidden h-full"> {/* Increased opacity */}
           {/* Background Image */}
           <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{ backgroundImage: 'url(/assets/sliders/slider3.jpg)' }}></div>
 
