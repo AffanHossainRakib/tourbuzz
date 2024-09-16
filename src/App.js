@@ -7,6 +7,7 @@ import LoginSignup from './pages/LoginSignup';
 import ContactUs from './pages/ContactUs';
 import FAQs from './pages/FAQs';
 import PaymentPage from './pages/PaymentPage';
+import UserDashboard from './pages/UserDashboard';
 import './index.css'; // Import Tailwind styles
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
                     <Route path="/contact-us" element={<ContactUs />} />
                     <Route path="/faqs" element={<FAQs />} />
                     <Route path="/payment" element={<PaymentPage />} />
+                    <Route path="/dashboard" element={<UserDashboard />} />
                     {/* Add more routes here as needed */}
                 </Routes>
             </div>
