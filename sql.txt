@@ -75,3 +75,50 @@ CREATE TABLE IF NOT EXISTS admin_tour_creations (
     FOREIGN KEY (admin_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (tour_id) REFERENCES tours(id) ON DELETE CASCADE
 );
+
+
+
+
+
+
+
+
+
+
+
+const promisePool = require('./db');
+
+// Wrapper function to execute a query with error handling
+function executeQuery(query, params = []) {
+    return new Promise((resolve, reject) => {
+        promisePool.query(query, params)
+            .then(([results]) => resolve(results))
+            .catch(err => {
+                console.error(`Error executing query: ${query}`, err);
+                reject(err);
+            });
+    });
+}
+
+// Users CRUD Operations
+const CreateUser = async (name, email, password, userType) => {
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
+        const query = `INSERT INTO users (name, email, password, user_type) VALUES (?, ?, ?, ?)`;
+        return await executeQuery(query, [name, email, hashedPassword, userType]);
+    } catch (err) {
+        console.error('Error in CreateUser:', err);
+        throw err;
+    }
+};
+
+
+
+// Other CRUD functions...
+
+module.exports = {
+    CreateUser,
+    GetUserByEmail,
+    // Export other functions...
+};
+

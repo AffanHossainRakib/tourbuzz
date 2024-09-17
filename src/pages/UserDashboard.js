@@ -1,5 +1,6 @@
 // src/pages/UserDashboard.js
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import TourDetailsOverlay from '../components/TourDetailsOverlay';
 import { FaUser, FaSuitcase, FaHistory, FaSignOutAlt } from 'react-icons/fa';
@@ -13,6 +14,7 @@ const UserDashboard = () => {
     });
     const [isEditing, setIsEditing] = useState(false);
     const [selectedTour, setSelectedTour] = useState(null);
+    const navigate = useNavigate();
 
     // Example data for bookings and tour history
     const bookings = [
@@ -68,6 +70,16 @@ const UserDashboard = () => {
         setSelectedTour(null);
     };
 
+    // Logout function
+    const handleLogout = () => {
+        // Clear any stored authentication data, e.g., tokens in local storage or cookies
+        localStorage.removeItem('authToken'); // Adjust this according to how you store the token
+        localStorage.removeItem('user'); // If you store user data, remove it
+
+        // Redirect to the login/signup page
+        navigate('/');
+    };
+
     return (
         <div 
             className="relative min-h-screen bg-cover bg-center bg-fixed" 
@@ -105,7 +117,7 @@ const UserDashboard = () => {
                         </li>
                         <li 
                             className="flex items-center space-x-2 cursor-pointer p-2 rounded-full hover:bg-gray-700"
-                            onClick={() => alert('Logging out...')} // Replace with actual logout logic
+                            onClick={handleLogout} // Call the logout function
                         >
                             <FaSignOutAlt />
                             <span>Logout</span>

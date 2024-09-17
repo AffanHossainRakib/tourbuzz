@@ -1,7 +1,8 @@
+// src/components/LoginSignup.js
 import React, { useState } from "react";
 import { FaArrowLeft } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // Import axios for API requests
+import axios from 'axios';
 
 const LoginSignup = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -10,8 +11,8 @@ const LoginSignup = () => {
   const [fullName, setFullName] = useState('');
   const navigate = useNavigate();
 
-  // Base URL for the backend server
-  const serverBaseUrl = 'http://localhost:5001';
+  // Base URL for the backend server, using environment variable
+  const serverBaseUrl = process.env.REACT_APP_SERVER_BASE_URL || 'http://localhost:5001';
 
   // Handle form submission for login
   const handleLogin = async (e) => {
@@ -19,38 +20,66 @@ const LoginSignup = () => {
     try {
       const response = await axios.post(`${serverBaseUrl}/Login`, { email, password });
       if (response.data.success) {
-        // Redirect to dashboard upon successful login
-        navigate('/dashboard');
+        // Store user info in localStorage
+        localStorage.setItem('user', JSON.stringify({
+          email,
+          userType: response.data.user_type,
+        }));
+
+        // Reset the form state
+        setEmail('');
+        setPassword('');
+
+        // Redirect based on user type
+        if (response.data.user_type === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
+        }
       } else {
         alert(response.data.message || 'Login failed.');
       }
     } catch (error) {
       console.error('Login error:', error);
-      alert('An error occurred during login.');
+      alert(error.response?.data?.message || 'An error occurred during login.');
     }
   };
 
   // Handle form submission for signup
-  const handleSignup = async (e) => {
-    e.preventDefault();
-    try {
+// src/components/LoginSignup.js
+
+const handleSignup = async (e) => {
+  e.preventDefault();
+  try {
       const response = await axios.post(`${serverBaseUrl}/CreateUser`, { name: fullName, email, password });
       if (response.data.success) {
-        // Redirect to dashboard upon successful signup
-        navigate('/dashboard');
+          // Store user info in localStorage
+          localStorage.setItem('user', JSON.stringify({
+              email,
+              userType: 'user', // Defaulting to 'user' for the front-end
+          }));
+
+          // Reset the form state
+          setFullName('');
+          setEmail('');
+          setPassword('');
+
+          // Redirect to dashboard upon successful signup
+          navigate('/dashboard');
       } else {
-        alert(response.data.message || 'Signup failed.');
+          alert(response.data.message || 'Signup failed.');
       }
-    } catch (error) {
+  } catch (error) {
       console.error('Signup error:', error);
-      alert('An error occurred during signup.');
-    }
-  };
+      alert(error.response?.data?.message || 'An error occurred during signup.');
+  }
+};
+
 
   return (
     <div 
       className="flex items-center justify-center min-h-screen relative bg-cover bg-center"
-      style={{ backgroundImage: `url('/assets/pages/auth.jpg')` }} // Set your background image
+      style={{ backgroundImage: `url('/assets/pages/auth.jpg')` }}
     >
       {/* Transparent Overlay Layer */}
       <div className="absolute inset-0 bg-black bg-opacity-70"></div>
@@ -63,10 +92,9 @@ const LoginSignup = () => {
         <FaArrowLeft size={20} />
       </button>
 
-      <div className="flex w-full max-w-5xl h-[500px] relative z-10"> {/* Set fixed height here */}
+      <div className="flex w-full max-w-5xl h-[500px] relative z-10">
         {/* Left Text Panel */}
-        <div className="w-1/2 p-8 bg-gray-800 bg-opacity-90 backdrop-blur-md rounded-l-lg flex flex-col justify-center items-center relative overflow-hidden h-full"> {/* Increased opacity */}
-          {/* Background Image */}
+        <div className="w-1/2 p-8 bg-gray-800 bg-opacity-90 backdrop-blur-md rounded-l-lg flex flex-col justify-center items-center relative overflow-hidden h-full">
           <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{ backgroundImage: 'url(/assets/sliders/slider3.jpg)' }}></div>
 
           <div className="relative z-10 text-white text-center">
@@ -82,11 +110,11 @@ const LoginSignup = () => {
         </div>
 
         {/* Right Form Panel */}
-        <div className="w-1/2 flex justify-center items-center p-8 bg-white bg-opacity-90 backdrop-blur-md rounded-r-lg transition duration-500 h-full"> {/* Ensure full height */}
+        <div className="w-1/2 flex justify-center items-center p-8 bg-white bg-opacity-90 backdrop-blur-md rounded-r-lg transition duration-500 h-full">
           <div className="w-full max-w-md">
             {/* Login Form */}
             {isLogin && (
-              <div className="transition-opacity duration-500 h-auto"> {/* Set auto height */}
+              <div className="transition-opacity duration-500 h-auto">
                 <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
                   Sign In
                 </h2>
@@ -131,7 +159,7 @@ const LoginSignup = () => {
 
             {/* Signup Form */}
             {!isLogin && (
-              <div className="transition-opacity duration-500 h-auto"> {/* Set auto height */}
+              <div className="transition-opacity duration-500 h-auto">
                 <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
                   Sign Up
                 </h2>

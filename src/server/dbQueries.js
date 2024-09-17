@@ -1,29 +1,45 @@
 // dbQueries.js
+const promisePool = require('./db');
+const bcrypt = require('bcrypt');
 
-// Importing MySQL connection (assuming you've set up a connection in db.js)
-const db = require('./db');
-
-// Wrapper function to execute a query
 function executeQuery(query, params = []) {
     return new Promise((resolve, reject) => {
-        db.query(query, params, (err, results) => {
-            if (err) {
-                return reject(err);
-            }
-            resolve(results);
-        });
+        promisePool.query(query, params)
+            .then(([results]) => resolve(results))
+            .catch((err) => {
+                console.error(`Error executing query: ${query}`, err);
+                reject(err);
+            });
     });
 }
 
 // Users CRUD Operations
-const CreateUser = (name, email, password, userType) => {
-    const query = `INSERT INTO users (name, email, password, user_type) VALUES (?, ?, ?, ?)`;
-    return executeQuery(query, [name, email, password, userType]);
+// dbQueries.js
+const CreateUser = async (name, email, password, userType = 'user') => {
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const query = `INSERT INTO users (name, email, password, user_type) VALUES (?, ?, ?, ?)`;
+        return await executeQuery(query, [name, email, hashedPassword, userType]);
+    } catch (err) {
+        console.error('Error in CreateUser:', err);
+        throw err;
+    }
 };
+
 
 const GetUsers = () => {
     const query = `SELECT * FROM users`;
     return executeQuery(query);
+};
+
+const GetUserByEmail = async (email) => {
+    try {
+        const query = `SELECT * FROM users WHERE email = ?`;
+        return await executeQuery(query, [email]);
+    } catch (err) {
+        console.error('Error in GetUserByEmail:', err);
+        throw err;
+    }
 };
 
 const GetUserById = (id) => {
@@ -201,7 +217,9 @@ const DeleteAdminTourCreation = (id) => {
     return executeQuery(query, [id]);
 };
 
+// Export all functions
 module.exports = {
+    executeQuery,
     CreateUser,
     GetUsers,
     GetUserById,
@@ -237,5 +255,6 @@ module.exports = {
     GetAdminTourCreations,
     GetAdminTourCreationById,
     GetToursCreatedByAdmin,
-    DeleteAdminTourCreation
+    DeleteAdminTourCreation,
+    GetUserByEmail
 };
