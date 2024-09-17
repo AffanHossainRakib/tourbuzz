@@ -1,7 +1,8 @@
 // src/pages/AdminDashboard.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import { FaUser, FaSuitcase, FaEdit, FaCamera, FaUserTie, FaBookOpen, FaUsers } from 'react-icons/fa';
+import axios from 'axios';
 
 const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('createTour');
@@ -16,60 +17,107 @@ const AdminDashboard = () => {
     const [showEditGuideOverlay, setShowEditGuideOverlay] = useState(false);
     const [guideSearchQuery, setGuideSearchQuery] = useState('');
 
-    // Dummy data for tours, users, and tour guides
-    const [tours, setTours] = useState([
-        {
-            id: 1,
-            title: 'Beach Paradise',
-            description: 'A wonderful beach tour...',
-            location: 'Beach',
-            price: 300,
-            availableSeats: 10,
-            startDate: '2024-09-01',
-            endDate: '2024-09-10',
-            image: '/assets/tours/beach-paradise.jpg',
-            featured: true,
-            guide: 'John Guide',
-            usersBooked: [{ id: 1, name: 'Jane Doe' }]
-        },
-        {
-            id: 2,
-            title: 'Mountain Adventure',
-            description: 'An exciting mountain tour...',
-            location: 'Mountain',
-            price: 500,
-            availableSeats: 15,
-            startDate: '2024-09-15',
-            endDate: '2024-09-25',
-            image: '/assets/tours/mountain-adventure.jpg',
-            featured: false,
-            guide: 'Jane Guide',
-            usersBooked: [{ id: 2, name: 'John Smith' }]
+    // State for tours, users, and tour guides
+    const [tours, setTours] = useState([]);
+    const [users, setUsers] = useState([]);
+    const [tourGuides, setTourGuides] = useState([]);
+    const [mediaFiles, setMediaFiles] = useState([]);
+
+    // State for new tour form
+    const [newTour, setNewTour] = useState({
+        title: '',
+        description: '',
+        location: '',
+        price: '',
+        availableSeats: '',
+        startDate: '',
+        endDate: '',
+        image: '',
+        guideId: '',
+        featured: false,
+        status: 'available' // Set default status as 'available'
+    });
+
+    // State for new guide form
+    const [newGuide, setNewGuide] = useState({
+        name: '',
+        email: '',
+        phoneNumber: '',
+        experienceYears: 0,
+        availabilityStatus: 'Available'
+    });
+
+    // Base URL for the backend server
+    const serverBaseUrl = process.env.REACT_APP_SERVER_BASE_URL || 'http://localhost:5001';
+
+    // Fetch tours, users, guides, and media files on mount
+    useEffect(() => {
+        fetchTours();
+        fetchUsers();
+        fetchTourGuides();
+        loadMediaFiles();
+    }, []);
+
+    const fetchTours = async () => {
+        try {
+            const response = await axios.get(`${serverBaseUrl}/GetToursWithGuideInfo`);
+            setTours(response.data);
+        } catch (error) {
+            console.error('Error fetching tours:', error);
         }
-    ]);
+    };
 
-    const users = [
-        { id: 1, name: 'John Doe', email: 'john@example.com' },
-        { id: 2, name: 'Jane Smith', email: 'jane@example.com' },
-    ];
+    const fetchUsers = async () => {
+        try {
+            const response = await axios.get(`${serverBaseUrl}/GetUsers`);
+            setUsers(response.data);
+        } catch (error) {
+            console.error('Error fetching users:', error);
+        }
+    };
 
-    const [tourGuides, setTourGuides] = useState([
-        { id: 1, name: 'John Guide', email: 'guide1@example.com' },
-        { id: 2, name: 'Jane Guide', email: 'guide2@example.com' }
-    ]);
+    const fetchTourGuides = async () => {
+        try {
+            const response = await axios.get(`${serverBaseUrl}/GetTourGuides`);
+            setTourGuides(response.data);
+        } catch (error) {
+            console.error('Error fetching tour guides:', error);
+        }
+    };
 
-    const [mediaFiles, setMediaFiles] = useState([
-        'beach.jpg', 'mountain.jpg', 'city.jpg' // Dummy images
-    ]);
+    // Load media files from /assets/tours directory
+    // AdminDashboard.js
+
+// Fetch media files
+const loadMediaFiles = async () => {
+    try {
+        const response = await axios.get(`${serverBaseUrl}/GetMediaFiles`);
+        setMediaFiles(response.data.files);
+    } catch (error) {
+        console.error('Error loading media files:', error);
+    }
+};
+
+
 
     const handleTabChange = (tab) => {
         setActiveTab(tab);
     };
 
-    const handleFeatureToggle = (tourId) => {
-        setTours(tours.map(tour =>
-            tour.id === tourId ? { ...tour, featured: !tour.featured } : tour
-        ));
+    const handleFeatureToggle = async (tour) => {
+        try {
+            await axios.post(`${serverBaseUrl}/UpdateTour`, {
+                id: tour.id,
+                title: tour.title,
+                description: tour.description,
+                price: tour.price,
+                featured: !tour.featured,
+                status: tour.status
+            });
+            fetchTours(); // Refresh tours list
+        } catch (error) {
+            console.error('Error updating tour:', error);
+        }
     };
 
     const handleEditTour = (tour) => {
@@ -77,10 +125,15 @@ const AdminDashboard = () => {
         setShowEditOverlay(true);
     };
 
-    const handleEditSave = () => {
-        // Logic to save edited tour details
-        setShowEditOverlay(false);
-        setSelectedTour(null);
+    const handleEditSave = async () => {
+        try {
+            await axios.post(`${serverBaseUrl}/UpdateTour`, selectedTour);
+            fetchTours(); // Refresh tours list
+            setShowEditOverlay(false);
+            setSelectedTour(null);
+        } catch (error) {
+            console.error('Error saving edited tour:', error);
+        }
     };
 
     const handleEditChange = (e) => {
@@ -120,10 +173,19 @@ const AdminDashboard = () => {
     );
 
     // Function to handle media upload
-    const handleMediaUpload = (e) => {
-        const files = Array.from(e.target.files).map(file => file.name);
-        // Simulate file upload
-        setMediaFiles(prev => [...prev, ...files]);
+    const handleMediaUpload = async (e) => {
+        const files = Array.from(e.target.files);
+        const formData = new FormData();
+        files.forEach((file, i) => formData.append(`file_${i}`, file));
+
+        try {
+            await axios.post(`${serverBaseUrl}/UploadMedia`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            loadMediaFiles(); // Refresh media files
+        } catch (error) {
+            console.error('Error uploading media:', error);
+        }
     };
 
     // Function to open media overlay
@@ -136,10 +198,15 @@ const AdminDashboard = () => {
         setShowEditGuideOverlay(true);
     };
 
-    const handleEditGuideSave = () => {
-        // Logic to save edited guide details
-        setShowEditGuideOverlay(false);
-        setSelectedGuide(null);
+    const handleEditGuideSave = async () => {
+        try {
+            await axios.post(`${serverBaseUrl}/UpdateTourGuide`, selectedGuide);
+            fetchTourGuides(); // Refresh tour guides list
+            setShowEditGuideOverlay(false);
+            setSelectedGuide(null);
+        } catch (error) {
+            console.error('Error saving edited tour guide:', error);
+        }
     };
 
     const handleEditGuideChange = (e) => {
@@ -156,6 +223,62 @@ const AdminDashboard = () => {
     const filteredGuides = tourGuides.filter(guide =>
         guide.name.toLowerCase().includes(guideSearchQuery.toLowerCase())
     );
+
+    // Create a new tour
+    const handleCreateTour = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await axios.post(`${serverBaseUrl}/CreateTour`, newTour);
+            if (response.data.success) {
+                fetchTours(); // Refresh tours list
+                // Reset the form
+                setNewTour({
+                    title: '',
+                    description: '',
+                    location: '',
+                    price: '',
+                    availableSeats: '',
+                    startDate: '',
+                    endDate: '',
+                    image: '',
+                    guideId: '',
+                    featured: false,
+                    status: 'available' // Reset to default
+                });
+                setActiveTab('editTour');
+            }
+        } catch (error) {
+            console.error('Error creating tour:', error);
+        }
+    };
+
+    // Handle new tour input change
+    const handleNewTourChange = (e) => {
+        const { name, value } = e.target;
+        setNewTour(prev => ({ ...prev, [name]: value }));
+    };
+
+    // Create a new tour guide
+    const handleCreateGuide = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await axios.post(`${serverBaseUrl}/CreateTourGuide`, newGuide);
+            if (response.data.success) {
+                fetchTourGuides(); // Refresh tour guides list
+                // Reset the form
+                setNewGuide({ name: '', email: '', phoneNumber: '', experienceYears: 0, availabilityStatus: 'Available' });
+                setActiveTab('viewGuides');
+            }
+        } catch (error) {
+            console.error('Error creating guide:', error);
+        }
+    };
+
+    // Handle new guide input change
+    const handleNewGuideChange = (e) => {
+        const { name, value } = e.target;
+        setNewGuide(prev => ({ ...prev, [name]: value }));
+    };
 
     return (
         <div
@@ -228,79 +351,123 @@ const AdminDashboard = () => {
                     {activeTab === 'createTour' && (
                         <div>
                             <h2 className="text-2xl font-bold mb-4">Create Tour</h2>
-                            <form className="space-y-4">
+                            <form className="space-y-4" onSubmit={handleCreateTour}>
                                 <div>
                                     <label className="block text-white mb-1">Title</label>
                                     <input
                                         type="text"
+                                        name="title"
+                                        value={newTour.title}
+                                        onChange={handleNewTourChange}
                                         className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none"
+                                        required
                                     />
                                 </div>
                                 <div>
                                     <label className="block text-white mb-1">Description</label>
                                     <textarea
+                                        name="description"
+                                        value={newTour.description}
+                                        onChange={handleNewTourChange}
                                         className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none"
+                                        required
                                     ></textarea>
                                 </div>
                                 <div>
                                     <label className="block text-white mb-1">Location</label>
                                     <input
                                         type="text"
+                                        name="location"
+                                        value={newTour.location}
+                                        onChange={handleNewTourChange}
                                         className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none"
+                                        required
                                     />
                                 </div>
                                 <div>
                                     <label className="block text-white mb-1">Price</label>
                                     <input
                                         type="number"
+                                        name="price"
+                                        value={newTour.price}
+                                        onChange={handleNewTourChange}
                                         className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none"
+                                        required
                                     />
                                 </div>
                                 <div>
                                     <label className="block text-white mb-1">Available Seats</label>
                                     <input
                                         type="number"
+                                        name="availableSeats"
+                                        value={newTour.availableSeats}
+                                        onChange={handleNewTourChange}
                                         className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none"
+                                        required
                                     />
                                 </div>
                                 <div>
                                     <label className="block text-white mb-1">Start Date</label>
                                     <input
                                         type="date"
+                                        name="startDate"
+                                        value={newTour.startDate}
+                                        onChange={handleNewTourChange}
                                         className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none"
+                                        required
                                     />
                                 </div>
                                 <div>
                                     <label className="block text-white mb-1">End Date</label>
                                     <input
                                         type="date"
+                                        name="endDate"
+                                        value={newTour.endDate}
+                                        onChange={handleNewTourChange}
                                         className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none"
+                                        required
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-white mb-1">Image</label>
-                                    <button
-                                        type="button"
-                                        className="bg-blue-600 text-white px-4 py-2 rounded-full transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg"
-                                        onClick={handleOpenMediaOverlay}
-                                    >
-                                        + Add Image
-                                    </button>
-                                </div>
-                                <div>
                                     <label className="block text-white mb-1">Assign Tour Guide</label>
-                                    <select className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none">
+                                    <select
+                                        name="guideId"
+                                        value={newTour.guideId}
+                                        onChange={handleNewTourChange}
+                                        className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none"
+                                        required
+                                    >
+                                        <option value="">Select Guide</option>
                                         {tourGuides.map(guide => (
-                                            <option key={guide.id} value={guide.name}>{guide.name}</option>
+                                            <option key={guide.id} value={guide.id}>{guide.name}</option>
                                         ))}
                                     </select>
                                 </div>
+                                <div>
+                                    <label className="block text-white mb-1">Status</label>
+                                    <select
+                                        name="status"
+                                        value={newTour.status}
+                                        onChange={handleNewTourChange}
+                                        className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none"
+                                        required
+                                    >
+                                        <option value="available">Available</option>
+                                        <option value="booked">Booked</option>
+                                    </select>
+                                </div>
                                 <div className="flex items-center">
-                                    <input type="checkbox" className="mr-2" />
+                                    <input
+                                        type="checkbox"
+                                        name="featured"
+                                        checked={newTour.featured}
+                                        onChange={(e) => setNewTour(prev => ({ ...prev, featured: e.target.checked }))}
+                                        className="mr-2"
+                                    />
                                     <label className="text-white">Set as Featured</label>
                                 </div>
                                 <button
-                                    type="button"
+                                    type="submit"
                                     className="bg-blue-600 text-white px-4 py-2 rounded-full transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg"
                                 >
                                     Create Tour
@@ -335,7 +502,7 @@ const AdminDashboard = () => {
                                             </button>
                                             <button
                                                 className="text-sm bg-yellow-600 text-white px-3 py-1 rounded-full"
-                                                onClick={() => handleFeatureToggle(tour.id)}
+                                                onClick={() => handleFeatureToggle(tour)}
                                             >
                                                 {tour.featured ? 'Unfeature' : 'Feature'}
                                             </button>
@@ -349,23 +516,63 @@ const AdminDashboard = () => {
                     {activeTab === 'createGuide' && (
                         <div>
                             <h2 className="text-2xl font-bold mb-4">Create Tour Guide</h2>
-                            <form className="space-y-4">
+                            <form className="space-y-4" onSubmit={handleCreateGuide}>
                                 <div>
                                     <label className="block text-white mb-1">Guide Name</label>
                                     <input
                                         type="text"
+                                        name="name"
+                                        value={newGuide.name}
+                                        onChange={handleNewGuideChange}
                                         className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none"
+                                        required
                                     />
                                 </div>
                                 <div>
                                     <label className="block text-white mb-1">Email</label>
                                     <input
                                         type="email"
+                                        name="email"
+                                        value={newGuide.email}
+                                        onChange={handleNewGuideChange}
+                                        className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none"
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-white mb-1">Phone Number</label>
+                                    <input
+                                        type="text"
+                                        name="phoneNumber"
+                                        value={newGuide.phoneNumber}
+                                        onChange={handleNewGuideChange}
                                         className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none"
                                     />
                                 </div>
+                                <div>
+                                    <label className="block text-white mb-1">Experience Years</label>
+                                    <input
+                                        type="number"
+                                        name="experienceYears"
+                                        value={newGuide.experienceYears}
+                                        onChange={handleNewGuideChange}
+                                        className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-white mb-1">Availability Status</label>
+                                    <select
+                                        name="availabilityStatus"
+                                        value={newGuide.availabilityStatus}
+                                        onChange={handleNewGuideChange}
+                                        className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none"
+                                    >
+                                        <option value="Available">Available</option>
+                                        <option value="Unavailable">Unavailable</option>
+                                    </select>
+                                </div>
                                 <button
-                                    type="button"
+                                    type="submit"
                                     className="bg-blue-600 text-white px-4 py-2 rounded-full transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg"
                                 >
                                     Create Guide
@@ -482,6 +689,7 @@ const AdminDashboard = () => {
                                         />
                                     </div>
                                 ))}
+
                             </div>
                         </div>
                     )}
@@ -566,16 +774,6 @@ const AdminDashboard = () => {
                                     onChange={handleEditChange}
                                     className="w-full px-4 py-2 border rounded-lg focus:outline-none"
                                 />
-                            </div>
-                            <div>
-                                <label className="block mb-1">Image</label>
-                                <button
-                                    type="button"
-                                    className="bg-blue-600 text-white px-4 py-2 rounded-full transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg"
-                                    onClick={handleOpenMediaOverlay}
-                                >
-                                    + Add Image
-                                </button>
                             </div>
                             <div>
                                 <label className="block mb-1">Assign Tour Guide</label>

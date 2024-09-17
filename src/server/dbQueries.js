@@ -63,10 +63,13 @@ const DeleteUser = (id) => {
 };
 
 // Tours CRUD Operations
-const CreateTour = (title, description, location, price, availableSeats, startDate, endDate, imageUrl, guideId, featured, status) => {
+
+// Create Tour with default status
+const CreateTour = (title, description, location, price, availableSeats, startDate, endDate, imageUrl, guideId, featured, status = 'active') => {
     const query = `INSERT INTO tours (title, description, location, price, available_seats, start_date, end_date, image_url, guide_id, featured, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     return executeQuery(query, [title, description, location, price, availableSeats, startDate, endDate, imageUrl, guideId, featured, status]);
 };
+
 
 const GetTours = () => {
     const query = `SELECT * FROM tours`;
@@ -99,10 +102,13 @@ const DeleteTour = (id) => {
 };
 
 // Tour Guides CRUD Operations
-const CreateTourGuide = (name, email, phoneNumber, experienceYears, availabilityStatus) => {
+
+// Create Tour Guide with default values
+const CreateTourGuide = (name, email, phoneNumber = '', experienceYears = 0, availabilityStatus = 'Available') => {
     const query = `INSERT INTO tour_guides (name, email, phone_number, experience_years, availability_status) VALUES (?, ?, ?, ?, ?)`;
     return executeQuery(query, [name, email, phoneNumber, experienceYears, availabilityStatus]);
 };
+
 
 const GetTourGuides = () => {
     const query = `SELECT * FROM tour_guides`;

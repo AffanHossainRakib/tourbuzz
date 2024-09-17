@@ -150,13 +150,14 @@ app.post('/Login', async (req, res) => {
 app.post('/CreateTour', async (req, res) => {
     const { title, description, location, price, availableSeats, startDate, endDate, imageUrl, guideId, featured, status } = req.body;
     try {
-        await CreateTour(title, description, location, price, availableSeats, startDate, endDate, imageUrl, guideId, featured, status);
+        await CreateTour(title, description, location, price, availableSeats, startDate, endDate, imageUrl, guideId, featured, status || 'active');
         res.status(200).json({ success: true, message: 'Tour created successfully.' });
     } catch (err) {
-        console.error('CreateTour Error:', err);
+        console.error(err);
         res.status(500).json({ success: false, message: 'Error creating tour.' });
     }
 });
+
 
 app.get('/GetTours', async (req, res) => {
     try {
@@ -223,16 +224,20 @@ app.delete('/DeleteTour/:id', async (req, res) => {
 });
 
 // Tour Guides
+// server.js
+
+// Create Tour Guide
 app.post('/CreateTourGuide', async (req, res) => {
     const { name, email, phoneNumber, experienceYears, availabilityStatus } = req.body;
     try {
         await CreateTourGuide(name, email, phoneNumber, experienceYears, availabilityStatus);
         res.status(200).json({ success: true, message: 'Tour guide created successfully.' });
     } catch (err) {
-        console.error('CreateTourGuide Error:', err);
+        console.error(err);
         res.status(500).json({ success: false, message: 'Error creating tour guide.' });
     }
 });
+
 
 app.get('/GetTourGuides', async (req, res) => {
     try {
@@ -474,6 +479,24 @@ app.delete('/DeleteAdminTourCreation/:id', async (req, res) => {
         res.status(500).json({ success: false, message: 'Error deleting admin tour creation.' });
     }
 });
+
+
+// server.js
+
+const path = require('path');
+const fs = require('fs');
+
+app.get('/GetMediaFiles', (req, res) => {
+    const mediaDir = path.join(__dirname, '..', 'public', 'assets', 'tours');
+    fs.readdir(mediaDir, (err, files) => {
+        if (err) {
+            console.error('Error reading media files:', err);
+            return res.status(500).json({ success: false, message: 'Error reading media files.' });
+        }
+        res.status(200).json({ success: true, files });
+    });
+});
+
 
 // Start the server
 app.listen(port, () => {
