@@ -8,6 +8,17 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Tour Guides Table
+CREATE TABLE IF NOT EXISTS tour_guides (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    phone_number VARCHAR(20),
+    experience_years INT,
+    availability_status ENUM('available', 'unavailable') NOT NULL DEFAULT 'available',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Tours Table
 CREATE TABLE IF NOT EXISTS tours (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -26,16 +37,7 @@ CREATE TABLE IF NOT EXISTS tours (
     FOREIGN KEY (guide_id) REFERENCES tour_guides(id) ON DELETE SET NULL
 );
 
--- Tour Guides Table
-CREATE TABLE IF NOT EXISTS tour_guides (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    phone_number VARCHAR(20),
-    experience_years INT,
-    availability_status ENUM('available', 'unavailable') NOT NULL DEFAULT 'available',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+
 
 -- Tour Bookings Table
 CREATE TABLE IF NOT EXISTS tour_bookings (
