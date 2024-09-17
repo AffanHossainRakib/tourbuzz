@@ -2,6 +2,7 @@
 const promisePool = require('./db');
 const bcrypt = require('bcrypt');
 
+// Helper function to execute queries
 function executeQuery(query, params = []) {
     return new Promise((resolve, reject) => {
         promisePool.query(query, params)
@@ -14,10 +15,10 @@ function executeQuery(query, params = []) {
 }
 
 // Users CRUD Operations
-// dbQueries.js
+
 const CreateUser = async (name, email, password, userType = 'user') => {
     try {
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10); // Hash password before inserting
         const query = `INSERT INTO users (name, email, password, user_type) VALUES (?, ?, ?, ?)`;
         return await executeQuery(query, [name, email, hashedPassword, userType]);
     } catch (err) {
@@ -25,7 +26,6 @@ const CreateUser = async (name, email, password, userType = 'user') => {
         throw err;
     }
 };
-
 
 const GetUsers = () => {
     const query = `SELECT * FROM users`;
@@ -64,12 +64,27 @@ const DeleteUser = (id) => {
 
 // Tours CRUD Operations
 
-// Create Tour with default status
-const CreateTour = (title, description, location, price, availableSeats, startDate, endDate, imageUrl, guideId, featured, status = 'active') => {
-    const query = `INSERT INTO tours (title, description, location, price, available_seats, start_date, end_date, image_url, guide_id, featured, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    return executeQuery(query, [title, description, location, price, availableSeats, startDate, endDate, imageUrl, guideId, featured, status]);
-};
+const CreateTour = async (title, description, location, price, availableSeats, startDate, endDate, imageUrl, guideId, featured, status = 'available') => {
+    const connection = await promisePool.getConnection();
+    try {
+        await connection.beginTransaction();
 
+        const tourQuery = `INSERT INTO tours (title, description, location, price, available_seats, start_date, end_date, image_url, guide_id, featured, status) 
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        await connection.query(tourQuery, [title, description, location, price, availableSeats, startDate, endDate, imageUrl, guideId, featured, status]);
+
+        const guideQuery = `UPDATE tour_guides SET availability_status = 'unavailable' WHERE id = ?`;
+        await connection.query(guideQuery, [guideId]);
+
+        await connection.commit();
+    } catch (err) {
+        await connection.rollback();
+        console.error('Error creating tour and updating guide:', err);
+        throw err;
+    } finally {
+        connection.release();
+    }
+};
 
 const GetTours = () => {
     const query = `SELECT * FROM tours`;
@@ -91,9 +106,25 @@ const GetToursWithGuideInfo = () => {
     return executeQuery(query);
 };
 
-const UpdateTour = (id, title, description, price) => {
-    const query = `UPDATE tours SET title = ?, description = ?, price = ? WHERE id = ?`;
-    return executeQuery(query, [title, description, price, id]);
+const UpdateTour = async (id, title, description, price, guideId, featured, status) => {
+    const connection = await promisePool.getConnection();
+    try {
+        await connection.beginTransaction();
+
+        const tourQuery = `UPDATE tours SET title = ?, description = ?, price = ?, guide_id = ?, featured = ?, status = ? WHERE id = ?`;
+        await connection.query(tourQuery, [title, description, price, guideId, featured, status, id]);
+
+        const guideQuery = `UPDATE tour_guides SET availability_status = 'unavailable' WHERE id = ?`;
+        await connection.query(guideQuery, [guideId]);
+
+        await connection.commit();
+    } catch (err) {
+        await connection.rollback();
+        console.error('Error updating tour and guide:', err);
+        throw err;
+    } finally {
+        connection.release();
+    }
 };
 
 const DeleteTour = (id) => {
@@ -103,12 +134,10 @@ const DeleteTour = (id) => {
 
 // Tour Guides CRUD Operations
 
-// Create Tour Guide with default values
-const CreateTourGuide = (name, email, phoneNumber = '', experienceYears = 0, availabilityStatus = 'Available') => {
+const CreateTourGuide = (name, email, phoneNumber = '', experienceYears = 0, availabilityStatus = 'available') => {
     const query = `INSERT INTO tour_guides (name, email, phone_number, experience_years, availability_status) VALUES (?, ?, ?, ?, ?)`;
     return executeQuery(query, [name, email, phoneNumber, experienceYears, availabilityStatus]);
 };
-
 
 const GetTourGuides = () => {
     const query = `SELECT * FROM tour_guides`;
@@ -131,6 +160,7 @@ const DeleteTourGuide = (id) => {
 };
 
 // Tour Bookings CRUD Operations
+
 const CreateTourBooking = (userId, tourId, seatsBooked) => {
     const query = `INSERT INTO tour_bookings (user_id, tour_id, booking_date, seats_booked) VALUES (?, ?, NOW(), ?)`;
     return executeQuery(query, [userId, tourId, seatsBooked]);
@@ -167,6 +197,7 @@ const DeleteTourBooking = (id) => {
 };
 
 // Payments CRUD Operations
+
 const CreatePayment = (bookingId, amount, paymentStatus) => {
     const query = `INSERT INTO payments (booking_id, amount, payment_date, payment_status) VALUES (?, ?, NOW(), ?)`;
     return executeQuery(query, [bookingId, amount, paymentStatus]);
@@ -198,6 +229,7 @@ const DeletePayment = (id) => {
 };
 
 // Admin Tour Creation Log Operations
+
 const LogAdminTourCreation = (adminId, tourId) => {
     const query = `INSERT INTO admin_tour_creations (admin_id, tour_id, creation_date) VALUES (?, ?, NOW())`;
     return executeQuery(query, [adminId, tourId]);
@@ -224,11 +256,13 @@ const DeleteAdminTourCreation = (id) => {
 };
 
 // Export all functions
+
 module.exports = {
     executeQuery,
     CreateUser,
     GetUsers,
     GetUserById,
+    GetUserByEmail,
     GetUsersByType,
     UpdateUser,
     DeleteUser,
@@ -261,6 +295,5 @@ module.exports = {
     GetAdminTourCreations,
     GetAdminTourCreationById,
     GetToursCreatedByAdmin,
-    DeleteAdminTourCreation,
-    GetUserByEmail
+    DeleteAdminTourCreation
 };

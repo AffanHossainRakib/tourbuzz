@@ -3,8 +3,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const bcrypt = require('bcrypt'); // Import bcrypt
+const path = require('path');
+const fs = require('fs');
 require('dotenv').config(); // Load environment variables
 
+// Import all the database functions from dbQueries.js
 const {
     CreateUser,
     GetUsers,
@@ -42,7 +45,7 @@ const {
     GetAdminTourCreations,
     GetAdminTourCreationById,
     GetToursCreatedByAdmin,
-    DeleteAdminTourCreation,
+    DeleteAdminTourCreation
 } = require('./dbQueries');
 
 const app = express();
@@ -52,9 +55,7 @@ const port = process.env.PORT || 5001;
 app.use(bodyParser.json());
 app.use(cors());
 
-// Define routes for API endpoints
-
-// Users
+// Users Routes
 app.post('/CreateUser', async (req, res) => {
     const { name, email, password, userType } = req.body;
     try {
@@ -120,7 +121,7 @@ app.delete('/DeleteUser/:id', async (req, res) => {
     }
 });
 
-// Login
+// Login Route
 app.post('/Login', async (req, res) => {
     const { email, password } = req.body;
     try {
@@ -146,18 +147,17 @@ app.post('/Login', async (req, res) => {
     }
 });
 
-// Tours
+// Tours Routes
 app.post('/CreateTour', async (req, res) => {
     const { title, description, location, price, availableSeats, startDate, endDate, imageUrl, guideId, featured, status } = req.body;
     try {
-        await CreateTour(title, description, location, price, availableSeats, startDate, endDate, imageUrl, guideId, featured, status || 'active');
+        await CreateTour(title, description, location, price, availableSeats, startDate, endDate, imageUrl, guideId, featured, status || 'available');
         res.status(200).json({ success: true, message: 'Tour created successfully.' });
     } catch (err) {
-        console.error(err);
+        console.error('CreateTour Error:', err);
         res.status(500).json({ success: false, message: 'Error creating tour.' });
     }
 });
-
 
 app.get('/GetTours', async (req, res) => {
     try {
@@ -202,9 +202,9 @@ app.get('/GetToursWithGuideInfo', async (req, res) => {
 });
 
 app.post('/UpdateTour', async (req, res) => {
-    const { id, title, description, price } = req.body;
+    const { id, title, description, price, guideId, featured, status } = req.body;
     try {
-        await UpdateTour(id, title, description, price);
+        await UpdateTour(id, title, description, price, guideId, featured, status);
         res.status(200).json({ success: true, message: 'Tour updated successfully.' });
     } catch (err) {
         console.error('UpdateTour Error:', err);
@@ -223,21 +223,17 @@ app.delete('/DeleteTour/:id', async (req, res) => {
     }
 });
 
-// Tour Guides
-// server.js
-
-// Create Tour Guide
+// Tour Guides Routes
 app.post('/CreateTourGuide', async (req, res) => {
     const { name, email, phoneNumber, experienceYears, availabilityStatus } = req.body;
     try {
         await CreateTourGuide(name, email, phoneNumber, experienceYears, availabilityStatus);
         res.status(200).json({ success: true, message: 'Tour guide created successfully.' });
     } catch (err) {
-        console.error(err);
+        console.error('CreateTourGuide Error:', err);
         res.status(500).json({ success: false, message: 'Error creating tour guide.' });
     }
 });
-
 
 app.get('/GetTourGuides', async (req, res) => {
     try {
@@ -282,7 +278,7 @@ app.delete('/DeleteTourGuide/:id', async (req, res) => {
     }
 });
 
-// Tour Bookings
+// Tour Bookings Routes
 app.post('/CreateTourBooking', async (req, res) => {
     const { userId, tourId, seatsBooked } = req.body;
     try {
@@ -359,7 +355,7 @@ app.delete('/DeleteTourBooking/:id', async (req, res) => {
     }
 });
 
-// Payments
+// Payments Routes
 app.post('/CreatePayment', async (req, res) => {
     const { bookingId, amount, paymentStatus } = req.body;
     try {
@@ -425,7 +421,7 @@ app.delete('/DeletePayment/:id', async (req, res) => {
     }
 });
 
-// Admin Tour Creation Log
+// Admin Tour Creation Log Routes
 app.post('/LogAdminTourCreation', async (req, res) => {
     const { adminId, tourId } = req.body;
     try {
@@ -480,14 +476,10 @@ app.delete('/DeleteAdminTourCreation/:id', async (req, res) => {
     }
 });
 
-
-// server.js
-
-const path = require('path');
-const fs = require('fs');
-
+// Media Files Route
 app.get('/GetMediaFiles', (req, res) => {
-    const mediaDir = path.join(__dirname, '..', 'public', 'assets', 'tours');
+    const mediaDir = path.resolve( '../../public/assets/tours'); // Adjusting path to point outside src/server
+
     fs.readdir(mediaDir, (err, files) => {
         if (err) {
             console.error('Error reading media files:', err);
