@@ -41,6 +41,12 @@ const GetUserById = (id) => {
     return executeQuery(query, [id]);
 };
 
+const DeleteUser = async (id) => {
+    const query = `DELETE FROM users WHERE id = ?`;
+    return executeQuery(query, [id]);
+};
+
+
 // Tours CRUD Operations
 
 const CreateTour = async (
@@ -147,6 +153,16 @@ const UpdateTour = async (
     }
 };
 
+const GetBookingsByTourId = (tourId) => {
+    const query = `
+        SELECT tb.*, u.name AS user_name, u.email
+        FROM tour_bookings tb
+        JOIN users u ON tb.user_id = u.id
+        WHERE tb.tour_id = ?
+    `;
+    return executeQuery(query, [tourId]);
+};
+
 
 
 // Get all tours
@@ -194,6 +210,22 @@ const CreateTourGuide = (name, email, phone_number, experience_years, availabili
     return executeQuery(query, [name, email, phone_number, experience_years, availability_status]);
 };
 
+const DeleteTourGuide = async (id) => {
+    const query = `DELETE FROM tour_guides WHERE id = ?`;
+    return executeQuery(query, [id]);
+};
+
+
+const UpdateTourGuide = (id, name, email, phone_number, experience_years, availability_status) => {
+    const query = `
+        UPDATE tour_guides
+        SET name = ?, email = ?, phone_number = ?, experience_years = ?, availability_status = ?
+        WHERE id = ?
+    `;
+    return executeQuery(query, [name, email, phone_number, experience_years, availability_status, id]);
+};
+
+
 const GetTourGuides = () => {
     const query = `SELECT * FROM tour_guides`;
     return executeQuery(query);
@@ -226,6 +258,56 @@ const LogAdminTourCreation = (admin_id, tour_id) => {
     return executeQuery(query, [admin_id, tour_id]);
 };
 
+const DeleteMedia = async (fileName) => {
+    try {
+        const filePath = path.join(__dirname, 'public/assets/tours', fileName);
+
+        // Check if the file exists before attempting to delete it
+        if (fs.existsSync(filePath)) {
+            // Delete the file
+            fs.unlinkSync(filePath);
+            return { success: true, message: 'Media file deleted successfully.' };
+        } else {
+            return { success: false, message: 'File not found.' };
+        }
+    } catch (error) {
+        console.error('DeleteMedia Error:', error);
+        return { success: false, message: 'Error deleting media file.' };
+    }
+};
+
+
+
+
+const UploadMedia = async (files) => {
+    try {
+        if (!files || Object.keys(files).length === 0) {
+            throw new Error('No files uploaded');
+        }
+
+        // Iterate over the uploaded files and save each one
+        Object.keys(files).forEach(async (key) => {
+            const file = files[key];
+            const uploadPath = path.join(__dirname, 'public/assets/tours', file.name);
+
+            // Move file to the specified folder
+            await file.mv(uploadPath, (err) => {
+                if (err) {
+                    console.error('UploadMedia Error:', err);
+                    throw new Error('Error uploading file');
+                }
+            });
+        });
+
+        return { success: true, message: 'Files uploaded successfully.' };
+    } catch (error) {
+        console.error('UploadMedia Error:', error);
+        throw new Error('Error uploading media.');
+    }
+};
+
+
+
 // Exporting functions
 
 module.exports = {
@@ -243,4 +325,10 @@ module.exports = {
     GetTours,
     GetTourGuideById,
     DeleteTour,
+    UpdateTourGuide,
+    DeleteTourGuide,
+    DeleteUser,
+    UploadMedia,
+    DeleteMedia,
+    GetBookingsByTourId,
 };

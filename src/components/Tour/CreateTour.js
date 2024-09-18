@@ -107,9 +107,9 @@ const CreateTour = () => {
     };
 
     return (
-        <div className="relative min-h-screen bg-cover bg-center bg-fixed">
-            <h2 className="text-2xl font-bold mb-4">Create Tour</h2>
-            <form className="space-y-4" onSubmit={handleCreateTour}>
+        <div className="relative min-h-screen bg-cover bg-center bg-fixed p-8">
+            <h2 className="text-2xl font-bold text-white mb-6">Create Tour</h2>
+            <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleCreateTour}>
                 <div>
                     <label className="block text-white mb-1">Title</label>
                     <input
@@ -186,7 +186,7 @@ const CreateTour = () => {
                         required
                     />
                 </div>
-                <div>
+                <div className="md:col-span-2">
                     <label className="block text-white mb-1">Assign Tour Guide</label>
                     <GuideSearch
                         guides={tourGuides}
@@ -195,7 +195,7 @@ const CreateTour = () => {
                         setShowDropdown={setShowDropdown} 
                     />
                 </div>
-                <div>
+                <div className="md:col-span-2">
                     <label className="block text-white mb-1">Select Media</label>
                     <button type="button" onClick={openMediaOverlay} className="bg-blue-600 text-white px-4 py-2 rounded-full">
                         Select Media
@@ -225,12 +225,14 @@ const CreateTour = () => {
                     />
                     <label className="text-white">Set as Featured</label>
                 </div>
-                <button
-                    type="submit"
-                    className="bg-blue-600 text-white px-4 py-2 rounded-full transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg"
-                >
-                    Create Tour
-                </button>
+                <div className="md:col-span-2">
+                    <button
+                        type="submit"
+                        className="w-full bg-blue-600 text-white px-4 py-2 rounded-full transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg"
+                    >
+                        Create Tour
+                    </button>
+                </div>
             </form>
 
             {showMediaOverlay && <MediaOverlay mediaFiles={mediaFiles} onSelect={handleSelectMedia} onClose={closeMediaOverlay} />}

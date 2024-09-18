@@ -20,7 +20,12 @@ const {
     CreateTourBooking,
     CreatePayment,
     GetTourGuideById,
-    DeleteTour
+    DeleteTour,
+    UpdateTourGuide,
+    DeleteTourGuide,
+    DeleteUser,
+    GetBookingsByTourId,
+    
 } = require('./dbQueries');
 
 const app = express();
@@ -61,6 +66,18 @@ app.get('/GetUserById/:id', async (req, res) => {
         res.status(500).json({ success: false, message: 'Error fetching user.' });
     }
 });
+
+app.post('/DeleteUser', async (req, res) => {
+    const { id } = req.body;  // Assuming the user ID is sent in the request body
+    try {
+        await DeleteUser(id);  // Call the function to delete the user by ID
+        res.status(200).json({ success: true, message: 'User deleted successfully.' });
+    } catch (err) {
+        console.error('DeleteUser Error:', err);
+        res.status(500).json({ success: false, message: 'Error deleting user.' });
+    }
+});
+
 
 app.post('/Login', async (req, res) => {
     const { email, password } = req.body;
@@ -180,6 +197,32 @@ app.post('/CreateTourGuide', async (req, res) => {
     }
 });
 
+
+
+// Endpoint to get bookings by tour ID
+app.get('/GetBookingsByTourId/:id', async (req, res) => {
+    const tourId = req.params.id;
+    try {
+        const bookings = await GetBookingsByTourId(tourId);
+        res.status(200).json({ success: true, data: bookings });
+    } catch (error) {
+        console.error('Error fetching bookings by tour ID:', error);
+        res.status(500).json({ success: false, message: 'Error fetching bookings' });
+    }
+});
+
+app.post('/DeleteTourGuide', async (req, res) => {
+    const { id } = req.body;  // Assuming the ID is sent in the request body
+    try {
+        await DeleteTourGuide(id);  // Call the function to delete the tour guide by ID
+        res.status(200).json({ success: true, message: 'Tour guide deleted successfully.' });
+    } catch (err) {
+        console.error('DeleteTourGuide Error:', err);
+        res.status(500).json({ success: false, message: 'Error deleting tour guide.' });
+    }
+});
+
+
 app.get('/GetTourGuides', async (req, res) => {
     try {
         const result = await GetTourGuides();
@@ -203,15 +246,16 @@ app.get('/GetTourGuideById/:id', async (req, res) => {
 
 
 app.post('/UpdateTourGuide', async (req, res) => {
-    const { id, name, email } = req.body;
+    const { id, name, email, phone_number, experience_years, availability_status } = req.body;  // Add all fields to destructuring
     try {
-        await UpdateTourGuide(id, name, email);
+        await UpdateTourGuide(id, name, email, phone_number, experience_years, availability_status);  // Pass all fields to the update function
         res.status(200).json({ success: true, message: 'Tour guide updated successfully.' });
     } catch (err) {
         console.error('UpdateTourGuide Error:', err);
         res.status(500).json({ success: false, message: 'Error updating tour guide.' });
     }
 });
+
 
 // Tour Bookings Routes
 app.post('/CreateTourBooking', async (req, res) => {
@@ -280,6 +324,52 @@ app.get('/GetMediaFiles', (req, res) => {
     });
 });
 
+
+
+app.post('/UploadMedia', async (req, res) => {
+    try {
+        if (!req.files) {
+            return res.status(400).json({ success: false, message: 'No files were uploaded.' });
+        }
+
+        const uploadedFiles = req.files;
+        Object.keys(uploadedFiles).forEach((key) => {
+            const file = uploadedFiles[key];
+            const uploadPath = path.join(__dirname, 'public/assets/tours', file.name);
+
+            // Save file to the server
+            file.mv(uploadPath, (err) => {
+                if (err) {
+                    console.error('UploadMedia Error:', err);
+                    return res.status(500).json({ success: false, message: 'Error uploading file.' });
+                }
+            });
+        });
+
+        res.status(200).json({ success: true, message: 'Files uploaded successfully.' });
+    } catch (err) {
+        console.error('UploadMedia Error:', err);
+        res.status(500).json({ success: false, message: 'Error uploading media.' });
+    }
+});
+
+app.post('/DeleteMedia', async (req, res) => {
+    const { fileName } = req.body;
+    const filePath = path.join(__dirname, 'public/assets/tours', fileName);
+
+    try {
+        // Delete the file from the server
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+            res.status(200).json({ success: true, message: 'Media file deleted successfully.' });
+        } else {
+            res.status(404).json({ success: false, message: 'File not found.' });
+        }
+    } catch (err) {
+        console.error('DeleteMedia Error:', err);
+        res.status(500).json({ success: false, message: 'Error deleting media file.' });
+    }
+});
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);

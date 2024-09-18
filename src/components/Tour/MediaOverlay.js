@@ -10,7 +10,9 @@ const MediaOverlay = ({ onSelect, onClose }) => {
         const fetchMediaFiles = async () => {
             try {
                 const response = await axios.get('http://localhost:5001/GetMediaFiles');
-                setMediaFiles(response.data.files);
+                // Filter out .DS_Store file
+                const filteredFiles = response.data.files.filter(file => file !== '.DS_Store');
+                setMediaFiles(filteredFiles);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching media files:', error);
