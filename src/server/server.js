@@ -2,64 +2,38 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const bcrypt = require('bcrypt'); // Import bcrypt
+const bcrypt = require('bcrypt'); 
 const path = require('path');
 const fs = require('fs');
-require('dotenv').config(); // Load environment variables
+require('dotenv').config(); 
 
-// Import all the database functions from dbQueries.js
 const {
     CreateUser,
     GetUsers,
     GetUserById,
     GetUserByEmail,
-    GetUsersByType,
-    UpdateUser,
-    DeleteUser,
     CreateTour,
     GetTours,
-    GetTourById,
-    GetToursByStatus,
-    GetToursWithGuideInfo,
     UpdateTour,
-    DeleteTour,
     CreateTourGuide,
     GetTourGuides,
-    GetTourGuideById,
-    UpdateTourGuide,
-    DeleteTourGuide,
     CreateTourBooking,
-    GetTourBookings,
-    GetTourBookingById,
-    GetBookingsByUserId,
-    GetBookingsByTourId,
-    UpdateTourBooking,
-    DeleteTourBooking,
     CreatePayment,
-    GetPayments,
-    GetPaymentById,
-    GetPaymentsByBookingId,
-    UpdatePayment,
-    DeletePayment,
-    LogAdminTourCreation,
-    GetAdminTourCreations,
-    GetAdminTourCreationById,
-    GetToursCreatedByAdmin,
-    DeleteAdminTourCreation
+    GetTourGuideById,
+    DeleteTour
 } = require('./dbQueries');
 
 const app = express();
 const port = process.env.PORT || 5001;
 
-// Middleware
 app.use(bodyParser.json());
 app.use(cors());
 
 // Users Routes
 app.post('/CreateUser', async (req, res) => {
-    const { name, email, password, userType } = req.body;
+    const { name, email, password, user_type } = req.body;
     try {
-        await CreateUser(name, email, password, userType);
+        await CreateUser(name, email, password, user_type);
         res.status(200).json({ success: true, message: 'User created successfully.' });
     } catch (err) {
         console.error('CreateUser Error:', err);
@@ -88,53 +62,15 @@ app.get('/GetUserById/:id', async (req, res) => {
     }
 });
 
-app.get('/GetUsersByType/:userType', async (req, res) => {
-    const { userType } = req.params;
-    try {
-        const result = await GetUsersByType(userType);
-        res.status(200).json(result);
-    } catch (err) {
-        console.error('GetUsersByType Error:', err);
-        res.status(500).json({ success: false, message: 'Error fetching users by type.' });
-    }
-});
-
-app.post('/UpdateUser', async (req, res) => {
-    const { id, name, email } = req.body;
-    try {
-        await UpdateUser(id, name, email);
-        res.status(200).json({ success: true, message: 'User updated successfully.' });
-    } catch (err) {
-        console.error('UpdateUser Error:', err);
-        res.status(500).json({ success: false, message: 'Error updating user.' });
-    }
-});
-
-app.delete('/DeleteUser/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        await DeleteUser(id);
-        res.status(200).json({ success: true, message: 'User deleted successfully.' });
-    } catch (err) {
-        console.error('DeleteUser Error:', err);
-        res.status(500).json({ success: false, message: 'Error deleting user.' });
-    }
-});
-
-// Login Route
 app.post('/Login', async (req, res) => {
     const { email, password } = req.body;
     try {
-        const results = await GetUserByEmail(email);
-        if (results.length > 0) {
-            const user = results[0];
+        const users = await GetUserByEmail(email);
+        if (users.length > 0) {
+            const user = users[0];
             const isPasswordValid = await bcrypt.compare(password, user.password);
             if (isPasswordValid) {
-                res.status(200).json({ 
-                    success: true, 
-                    message: 'Login successful.',
-                    user_type: user.user_type 
-                });
+                res.status(200).json({ success: true, message: 'Login successful.', user_type: user.user_type });
             } else {
                 res.status(401).json({ success: false, message: 'Invalid credentials.' });
             }
@@ -149,9 +85,22 @@ app.post('/Login', async (req, res) => {
 
 // Tours Routes
 app.post('/CreateTour', async (req, res) => {
-    const { title, description, location, price, availableSeats, startDate, endDate, imageUrl, guideId, featured, status } = req.body;
+    const {
+        title,
+        description,
+        location,
+        price,
+        available_seats,
+        start_date,
+        end_date,
+        image_url,
+        guide_id,
+        featured,
+        status
+    } = req.body;
+
     try {
-        await CreateTour(title, description, location, price, availableSeats, startDate, endDate, imageUrl, guideId, featured, status || 'available');
+        await CreateTour(title, description, location, price, available_seats, start_date, end_date, image_url, guide_id, featured, status);
         res.status(200).json({ success: true, message: 'Tour created successfully.' });
     } catch (err) {
         console.error('CreateTour Error:', err);
@@ -159,58 +108,43 @@ app.post('/CreateTour', async (req, res) => {
     }
 });
 
-app.get('/GetTours', async (req, res) => {
-    try {
-        const result = await GetTours();
-        res.status(200).json(result);
-    } catch (err) {
-        console.error('GetTours Error:', err);
-        res.status(500).json({ success: false, message: 'Error fetching tours.' });
-    }
-});
-
-app.get('/GetTourById/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        const result = await GetTourById(id);
-        res.status(200).json(result);
-    } catch (err) {
-        console.error('GetTourById Error:', err);
-        res.status(500).json({ success: false, message: 'Error fetching tour.' });
-    }
-});
-
-app.get('/GetToursByStatus/:status', async (req, res) => {
-    const { status } = req.params;
-    try {
-        const result = await GetToursByStatus(status);
-        res.status(200).json(result);
-    } catch (err) {
-        console.error('GetToursByStatus Error:', err);
-        res.status(500).json({ success: false, message: 'Error fetching tours by status.' });
-    }
-});
-
-app.get('/GetToursWithGuideInfo', async (req, res) => {
-    try {
-        const result = await GetToursWithGuideInfo();
-        res.status(200).json(result);
-    } catch (err) {
-        console.error('GetToursWithGuideInfo Error:', err);
-        res.status(500).json({ success: false, message: 'Error fetching tours with guide info.' });
-    }
-});
-
 app.post('/UpdateTour', async (req, res) => {
-    const { id, title, description, price, guideId, featured, status } = req.body;
+    const {
+        id,
+        title,
+        description,
+        price,
+        available_seats,
+        start_date,
+        end_date,
+        image_url,
+        guide_id,
+        featured,
+        status,
+        previous_guide_id
+    } = req.body;
+
     try {
-        await UpdateTour(id, title, description, price, guideId, featured, status);
+        await UpdateTour(id, title, description, price, available_seats, start_date, end_date, image_url, guide_id, featured, status, previous_guide_id);
         res.status(200).json({ success: true, message: 'Tour updated successfully.' });
     } catch (err) {
         console.error('UpdateTour Error:', err);
         res.status(500).json({ success: false, message: 'Error updating tour.' });
     }
 });
+
+
+// API Route to get all tours
+app.get('/GetTours', async (req, res) => {
+    try {
+        const tours = await GetTours();
+        res.status(200).json(tours);
+    } catch (error) {
+        console.error('GetTours Error:', error);
+        res.status(500).json({ success: false, message: 'Error fetching tours.' });
+    }
+});
+
 
 app.delete('/DeleteTour/:id', async (req, res) => {
     const { id } = req.params;
@@ -223,11 +157,22 @@ app.delete('/DeleteTour/:id', async (req, res) => {
     }
 });
 
+
+app.get('/GetTours', async (req, res) => {
+    try {
+        const result = await GetTours();
+        res.status(200).json(result);
+    } catch (err) {
+        console.error('GetTours Error:', err);
+        res.status(500).json({ success: false, message: 'Error fetching tours.' });
+    }
+});
+
 // Tour Guides Routes
 app.post('/CreateTourGuide', async (req, res) => {
-    const { name, email, phoneNumber, experienceYears, availabilityStatus } = req.body;
+    const { name, email, phone_number, experience_years, availability_status } = req.body;
     try {
-        await CreateTourGuide(name, email, phoneNumber, experienceYears, availabilityStatus);
+        await CreateTourGuide(name, email, phone_number, experience_years, availability_status);
         res.status(200).json({ success: true, message: 'Tour guide created successfully.' });
     } catch (err) {
         console.error('CreateTourGuide Error:', err);
@@ -249,12 +194,13 @@ app.get('/GetTourGuideById/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const result = await GetTourGuideById(id);
-        res.status(200).json(result);
+        res.status(200).json(result[0]); // Send the first result
     } catch (err) {
         console.error('GetTourGuideById Error:', err);
         res.status(500).json({ success: false, message: 'Error fetching tour guide.' });
     }
 });
+
 
 app.post('/UpdateTourGuide', async (req, res) => {
     const { id, name, email } = req.body;
@@ -267,22 +213,11 @@ app.post('/UpdateTourGuide', async (req, res) => {
     }
 });
 
-app.delete('/DeleteTourGuide/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        await DeleteTourGuide(id);
-        res.status(200).json({ success: true, message: 'Tour guide deleted successfully.' });
-    } catch (err) {
-        console.error('DeleteTourGuide Error:', err);
-        res.status(500).json({ success: false, message: 'Error deleting tour guide.' });
-    }
-});
-
 // Tour Bookings Routes
 app.post('/CreateTourBooking', async (req, res) => {
-    const { userId, tourId, seatsBooked } = req.body;
+    const { user_id, tour_id, seats_booked } = req.body;
     try {
-        await CreateTourBooking(userId, tourId, seatsBooked);
+        await CreateTourBooking(user_id, tour_id, seats_booked);
         res.status(200).json({ success: true, message: 'Tour booking created successfully.' });
     } catch (err) {
         console.error('CreateTourBooking Error:', err);
@@ -300,21 +235,10 @@ app.get('/GetTourBookings', async (req, res) => {
     }
 });
 
-app.get('/GetTourBookingById/:id', async (req, res) => {
-    const { id } = req.params;
+app.get('/GetBookingsByUserId/:user_id', async (req, res) => {
+    const { user_id } = req.params;
     try {
-        const result = await GetTourBookingById(id);
-        res.status(200).json(result);
-    } catch (err) {
-        console.error('GetTourBookingById Error:', err);
-        res.status(500).json({ success: false, message: 'Error fetching tour booking.' });
-    }
-});
-
-app.get('/GetBookingsByUserId/:userId', async (req, res) => {
-    const { userId } = req.params;
-    try {
-        const result = await GetBookingsByUserId(userId);
+        const result = await GetBookingsByUserId(user_id);
         res.status(200).json(result);
     } catch (err) {
         console.error('GetBookingsByUserId Error:', err);
@@ -322,44 +246,11 @@ app.get('/GetBookingsByUserId/:userId', async (req, res) => {
     }
 });
 
-app.get('/GetBookingsByTourId/:tourId', async (req, res) => {
-    const { tourId } = req.params;
-    try {
-        const result = await GetBookingsByTourId(tourId);
-        res.status(200).json(result);
-    } catch (err) {
-        console.error('GetBookingsByTourId Error:', err);
-        res.status(500).json({ success: false, message: 'Error fetching bookings by tour ID.' });
-    }
-});
-
-app.post('/UpdateTourBooking', async (req, res) => {
-    const { id, seatsBooked } = req.body;
-    try {
-        await UpdateTourBooking(id, seatsBooked);
-        res.status(200).json({ success: true, message: 'Tour booking updated successfully.' });
-    } catch (err) {
-        console.error('UpdateTourBooking Error:', err);
-        res.status(500).json({ success: false, message: 'Error updating tour booking.' });
-    }
-});
-
-app.delete('/DeleteTourBooking/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        await DeleteTourBooking(id);
-        res.status(200).json({ success: true, message: 'Tour booking deleted successfully.' });
-    } catch (err) {
-        console.error('DeleteTourBooking Error:', err);
-        res.status(500).json({ success: false, message: 'Error deleting tour booking.' });
-    }
-});
-
 // Payments Routes
 app.post('/CreatePayment', async (req, res) => {
-    const { bookingId, amount, paymentStatus } = req.body;
+    const { booking_id, amount, payment_status } = req.body;
     try {
-        await CreatePayment(bookingId, amount, paymentStatus);
+        await CreatePayment(booking_id, amount, payment_status);
         res.status(200).json({ success: true, message: 'Payment created successfully.' });
     } catch (err) {
         console.error('CreatePayment Error:', err);
@@ -377,106 +268,6 @@ app.get('/GetPayments', async (req, res) => {
     }
 });
 
-app.get('/GetPaymentById/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        const result = await GetPaymentById(id);
-        res.status(200).json(result);
-    } catch (err) {
-        console.error('GetPaymentById Error:', err);
-        res.status(500).json({ success: false, message: 'Error fetching payment.' });
-    }
-});
-
-app.get('/GetPaymentsByBookingId/:bookingId', async (req, res) => {
-    const { bookingId } = req.params;
-    try {
-        const result = await GetPaymentsByBookingId(bookingId);
-        res.status(200).json(result);
-    } catch (err) {
-        console.error('GetPaymentsByBookingId Error:', err);
-        res.status(500).json({ success: false, message: 'Error fetching payments by booking ID.' });
-    }
-});
-
-app.post('/UpdatePayment', async (req, res) => {
-    const { id, paymentStatus } = req.body;
-    try {
-        await UpdatePayment(id, paymentStatus);
-        res.status(200).json({ success: true, message: 'Payment updated successfully.' });
-    } catch (err) {
-        console.error('UpdatePayment Error:', err);
-        res.status(500).json({ success: false, message: 'Error updating payment.' });
-    }
-});
-
-app.delete('/DeletePayment/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        await DeletePayment(id);
-        res.status(200).json({ success: true, message: 'Payment deleted successfully.' });
-    } catch (err) {
-        console.error('DeletePayment Error:', err);
-        res.status(500).json({ success: false, message: 'Error deleting payment.' });
-    }
-});
-
-// Admin Tour Creation Log Routes
-app.post('/LogAdminTourCreation', async (req, res) => {
-    const { adminId, tourId } = req.body;
-    try {
-        await LogAdminTourCreation(adminId, tourId);
-        res.status(200).json({ success: true, message: 'Admin tour creation logged successfully.' });
-    } catch (err) {
-        console.error('LogAdminTourCreation Error:', err);
-        res.status(500).json({ success: false, message: 'Error logging admin tour creation.' });
-    }
-});
-
-app.get('/GetAdminTourCreations', async (req, res) => {
-    try {
-        const result = await GetAdminTourCreations();
-        res.status(200).json(result);
-    } catch (err) {
-        console.error('GetAdminTourCreations Error:', err);
-        res.status(500).json({ success: false, message: 'Error fetching admin tour creations.' });
-    }
-});
-
-app.get('/GetAdminTourCreationById/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        const result = await GetAdminTourCreationById(id);
-        res.status(200).json(result);
-    } catch (err) {
-        console.error('GetAdminTourCreationById Error:', err);
-        res.status(500).json({ success: false, message: 'Error fetching admin tour creation.' });
-    }
-});
-
-app.get('/GetToursCreatedByAdmin/:adminId', async (req, res) => {
-    const { adminId } = req.params;
-    try {
-        const result = await GetToursCreatedByAdmin(adminId);
-        res.status(200).json(result);
-    } catch (err) {
-        console.error('GetToursCreatedByAdmin Error:', err);
-        res.status(500).json({ success: false, message: 'Error fetching tours created by admin.' });
-    }
-});
-
-app.delete('/DeleteAdminTourCreation/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        await DeleteAdminTourCreation(id);
-        res.status(200).json({ success: true, message: 'Admin tour creation deleted successfully.' });
-    } catch (err) {
-        console.error('DeleteAdminTourCreation Error:', err);
-        res.status(500).json({ success: false, message: 'Error deleting admin tour creation.' });
-    }
-});
-
-// Media Files Route
 app.get('/GetMediaFiles', (req, res) => {
     const mediaDir = path.resolve( '../../public/assets/tours'); // Adjusting path to point outside src/server
 
@@ -490,7 +281,6 @@ app.get('/GetMediaFiles', (req, res) => {
 });
 
 
-// Start the server
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });

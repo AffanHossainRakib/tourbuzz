@@ -1,4 +1,3 @@
-// dbQueries.js
 const promisePool = require('./db');
 const bcrypt = require('bcrypt');
 
@@ -16,11 +15,11 @@ function executeQuery(query, params = []) {
 
 // Users CRUD Operations
 
-const CreateUser = async (name, email, password, userType = 'user') => {
+const CreateUser = async (name, email, password, user_type = 'user') => {
     try {
-        const hashedPassword = await bcrypt.hash(password, 10); // Hash password before inserting
+        const hashedPassword = await bcrypt.hash(password, 10); 
         const query = `INSERT INTO users (name, email, password, user_type) VALUES (?, ?, ?, ?)`;
-        return await executeQuery(query, [name, email, hashedPassword, userType]);
+        return await executeQuery(query, [name, email, hashedPassword, user_type]);
     } catch (err) {
         console.error('Error in CreateUser:', err);
         throw err;
@@ -32,14 +31,9 @@ const GetUsers = () => {
     return executeQuery(query);
 };
 
-const GetUserByEmail = async (email) => {
-    try {
-        const query = `SELECT * FROM users WHERE email = ?`;
-        return await executeQuery(query, [email]);
-    } catch (err) {
-        console.error('Error in GetUserByEmail:', err);
-        throw err;
-    }
+const GetUserByEmail = (email) => {
+    const query = `SELECT * FROM users WHERE email = ?`;
+    return executeQuery(query, [email]);
 };
 
 const GetUserById = (id) => {
@@ -47,96 +41,157 @@ const GetUserById = (id) => {
     return executeQuery(query, [id]);
 };
 
-const GetUsersByType = (userType) => {
-    const query = `SELECT * FROM users WHERE user_type = ?`;
-    return executeQuery(query, [userType]);
-};
-
-const UpdateUser = (id, name, email) => {
-    const query = `UPDATE users SET name = ?, email = ? WHERE id = ?`;
-    return executeQuery(query, [name, email, id]);
-};
-
-const DeleteUser = (id) => {
-    const query = `DELETE FROM users WHERE id = ?`;
-    return executeQuery(query, [id]);
-};
-
 // Tours CRUD Operations
 
-const CreateTour = async (title, description, location, price, availableSeats, startDate, endDate, imageUrl, guideId, featured, status = 'available') => {
+const CreateTour = async (
+    title,
+    description,
+    location,
+    price,
+    available_seats,
+    start_date,
+    end_date,
+    image_url,
+    guide_id,
+    featured,
+    status = 'available'
+) => {
     const connection = await promisePool.getConnection();
     try {
         await connection.beginTransaction();
 
-        const tourQuery = `INSERT INTO tours (title, description, location, price, available_seats, start_date, end_date, image_url, guide_id, featured, status) 
-                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-        await connection.query(tourQuery, [title, description, location, price, availableSeats, startDate, endDate, imageUrl, guideId, featured, status]);
+        const tourQuery = `
+            INSERT INTO tours (title, description, location, price, available_seats, start_date, end_date, image_url, guide_id, featured, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
 
-        const guideQuery = `UPDATE tour_guides SET availability_status = 'unavailable' WHERE id = ?`;
-        await connection.query(guideQuery, [guideId]);
+        await connection.query(tourQuery, [
+            title,
+            description,
+            location,
+            price,
+            available_seats,
+            start_date,
+            end_date,
+            image_url,
+            guide_id,
+            featured ? 1 : 0,
+            status
+        ]);
+
+        if (guide_id) {
+            const guideQuery = `UPDATE tour_guides SET availability_status = 'unavailable' WHERE id = ?`;
+            await connection.query(guideQuery, [guide_id]);
+        }
 
         await connection.commit();
     } catch (err) {
         await connection.rollback();
-        console.error('Error creating tour and updating guide:', err);
+        console.error('Error creating tour:', err);
         throw err;
     } finally {
         connection.release();
     }
 };
 
-const GetTours = () => {
+const UpdateTour = async (
+    id,
+    title,
+    description,
+    price,
+    available_seats,
+    start_date,
+    end_date,
+    image_url,
+    guide_id,
+    featured,
+    status,
+    previous_guide_id
+) => {
+    const connection = await promisePool.getConnection();
+    try {
+        await connection.beginTransaction();
+
+        // Ensure the date is stored correctly as only YYYY-MM-DD
+        const formattedStartDate = start_date.split('T')[0];  // Extract only the date part
+        const formattedEndDate = end_date.split('T')[0];      // Extract only the date part
+
+        const tourQuery = `
+            UPDATE tours 
+            SET title = ?, description = ?, price = ?, available_seats = ?, start_date = ?, end_date = ?, image_url = ?, guide_id = ?, featured = ?, status = ? 
+            WHERE id = ?`;
+        await connection.query(tourQuery, [title, description, price, available_seats, formattedStartDate, formattedEndDate, image_url, guide_id, featured, status, id]);
+
+        // Handle guide availability updates
+        if (previous_guide_id && previous_guide_id !== guide_id) {
+            // Make the previous guide available
+            const previousGuideQuery = `UPDATE tour_guides SET availability_status = 'available' WHERE id = ?`;
+            await connection.query(previousGuideQuery, [previous_guide_id]);
+
+            // Make the new guide unavailable
+            const newGuideQuery = `UPDATE tour_guides SET availability_status = 'unavailable' WHERE id = ?`;
+            await connection.query(newGuideQuery, [guide_id]);
+        } else if (!previous_guide_id && guide_id) {
+            // If no previous guide, but a new guide is assigned, mark them as unavailable
+            const newGuideQuery = `UPDATE tour_guides SET availability_status = 'unavailable' WHERE id = ?`;
+            await connection.query(newGuideQuery, [guide_id]);
+        }
+
+        await connection.commit();
+    } catch (err) {
+        await connection.rollback();
+        console.error('Error updating tour:', err);
+        throw err;
+    } finally {
+        connection.release();
+    }
+};
+
+
+
+// Get all tours
+const GetTours = async () => {
     const query = `SELECT * FROM tours`;
-    return executeQuery(query);
+    try {
+        const [results] = await promisePool.query(query);
+        return results;
+    } catch (err) {
+        console.error('Error fetching tours:', err);
+        throw err;
+    }
 };
 
-const GetTourById = (id) => {
-    const query = `SELECT * FROM tours WHERE id = ?`;
-    return executeQuery(query, [id]);
-};
+// dbQueries.js
 
-const GetToursByStatus = (status) => {
-    const query = `SELECT * FROM tours WHERE status = ?`;
-    return executeQuery(query, [status]);
-};
-
-const GetToursWithGuideInfo = () => {
-    const query = `SELECT t.*, tg.name AS guide_name FROM tours t LEFT JOIN tour_guides tg ON t.guide_id = tg.id`;
-    return executeQuery(query);
-};
-
-const UpdateTour = async (id, title, description, price, guideId, featured, status) => {
+const DeleteTour = async (id) => {
     const connection = await promisePool.getConnection();
     try {
         await connection.beginTransaction();
 
-        const tourQuery = `UPDATE tours SET title = ?, description = ?, price = ?, guide_id = ?, featured = ?, status = ? WHERE id = ?`;
-        await connection.query(tourQuery, [title, description, price, guideId, featured, status, id]);
+        // SQL query to delete the tour from the 'tours' table
+        const deleteTourQuery = `DELETE FROM tours WHERE id = ?`;
+        await connection.query(deleteTourQuery, [id]);
 
-        const guideQuery = `UPDATE tour_guides SET availability_status = 'unavailable' WHERE id = ?`;
-        await connection.query(guideQuery, [guideId]);
-
+        // Commit the transaction
         await connection.commit();
     } catch (err) {
-        await connection.rollback();
-        console.error('Error updating tour and guide:', err);
+        await connection.rollback(); // Rollback the transaction on error
+        console.error('Error deleting tour:', err);
         throw err;
     } finally {
-        connection.release();
+        connection.release(); // Release the database connection
     }
 };
 
-const DeleteTour = (id) => {
-    const query = `DELETE FROM tours WHERE id = ?`;
-    return executeQuery(query, [id]);
-};
 
-// Tour Guides CRUD Operations
 
-const CreateTourGuide = (name, email, phoneNumber = '', experienceYears = 0, availabilityStatus = 'available') => {
+
+
+// Tour Guide CRUD Operations
+
+const CreateTourGuide = (name, email, phone_number, experience_years, availability_status = 'available') => {
     const query = `INSERT INTO tour_guides (name, email, phone_number, experience_years, availability_status) VALUES (?, ?, ?, ?, ?)`;
-    return executeQuery(query, [name, email, phoneNumber, experienceYears, availabilityStatus]);
+    return executeQuery(query, [name, email, phone_number, experience_years, availability_status]);
 };
 
 const GetTourGuides = () => {
@@ -144,156 +199,48 @@ const GetTourGuides = () => {
     return executeQuery(query);
 };
 
-const GetTourGuideById = (id) => {
+const GetTourGuideById = async (id) => {
     const query = `SELECT * FROM tour_guides WHERE id = ?`;
     return executeQuery(query, [id]);
 };
 
-const UpdateTourGuide = (id, name, email) => {
-    const query = `UPDATE tour_guides SET name = ?, email = ? WHERE id = ?`;
-    return executeQuery(query, [name, email, id]);
-};
-
-const DeleteTourGuide = (id) => {
-    const query = `DELETE FROM tour_guides WHERE id = ?`;
-    return executeQuery(query, [id]);
-};
 
 // Tour Bookings CRUD Operations
 
-const CreateTourBooking = (userId, tourId, seatsBooked) => {
-    const query = `INSERT INTO tour_bookings (user_id, tour_id, booking_date, seats_booked) VALUES (?, ?, NOW(), ?)`;
-    return executeQuery(query, [userId, tourId, seatsBooked]);
-};
-
-const GetTourBookings = () => {
-    const query = `SELECT * FROM tour_bookings`;
-    return executeQuery(query);
-};
-
-const GetTourBookingById = (id) => {
-    const query = `SELECT * FROM tour_bookings WHERE id = ?`;
-    return executeQuery(query, [id]);
-};
-
-const GetBookingsByUserId = (userId) => {
-    const query = `SELECT * FROM tour_bookings WHERE user_id = ?`;
-    return executeQuery(query, [userId]);
-};
-
-const GetBookingsByTourId = (tourId) => {
-    const query = `SELECT * FROM tour_bookings WHERE tour_id = ?`;
-    return executeQuery(query, [tourId]);
-};
-
-const UpdateTourBooking = (id, seatsBooked) => {
-    const query = `UPDATE tour_bookings SET seats_booked = ? WHERE id = ?`;
-    return executeQuery(query, [seatsBooked, id]);
-};
-
-const DeleteTourBooking = (id) => {
-    const query = `DELETE FROM tour_bookings WHERE id = ?`;
-    return executeQuery(query, [id]);
+const CreateTourBooking = (user_id, tour_id, seats_booked) => {
+    const query = `INSERT INTO tour_bookings (user_id, tour_id, seats_booked) VALUES (?, ?, ?)`;
+    return executeQuery(query, [user_id, tour_id, seats_booked]);
 };
 
 // Payments CRUD Operations
 
-const CreatePayment = (bookingId, amount, paymentStatus) => {
-    const query = `INSERT INTO payments (booking_id, amount, payment_date, payment_status) VALUES (?, ?, NOW(), ?)`;
-    return executeQuery(query, [bookingId, amount, paymentStatus]);
+const CreatePayment = (booking_id, amount, payment_status) => {
+    const query = `INSERT INTO payments (booking_id, amount, payment_status) VALUES (?, ?, ?)`;
+    return executeQuery(query, [booking_id, amount, payment_status]);
 };
 
-const GetPayments = () => {
-    const query = `SELECT * FROM payments`;
-    return executeQuery(query);
+// Admin Tour Creation Log
+
+const LogAdminTourCreation = (admin_id, tour_id) => {
+    const query = `INSERT INTO admin_tour_creations (admin_id, tour_id) VALUES (?, ?)`;
+    return executeQuery(query, [admin_id, tour_id]);
 };
 
-const GetPaymentById = (id) => {
-    const query = `SELECT * FROM payments WHERE id = ?`;
-    return executeQuery(query, [id]);
-};
-
-const GetPaymentsByBookingId = (bookingId) => {
-    const query = `SELECT * FROM payments WHERE booking_id = ?`;
-    return executeQuery(query, [bookingId]);
-};
-
-const UpdatePayment = (id, paymentStatus) => {
-    const query = `UPDATE payments SET payment_status = ? WHERE id = ?`;
-    return executeQuery(query, [paymentStatus, id]);
-};
-
-const DeletePayment = (id) => {
-    const query = `DELETE FROM payments WHERE id = ?`;
-    return executeQuery(query, [id]);
-};
-
-// Admin Tour Creation Log Operations
-
-const LogAdminTourCreation = (adminId, tourId) => {
-    const query = `INSERT INTO admin_tour_creations (admin_id, tour_id, creation_date) VALUES (?, ?, NOW())`;
-    return executeQuery(query, [adminId, tourId]);
-};
-
-const GetAdminTourCreations = () => {
-    const query = `SELECT * FROM admin_tour_creations`;
-    return executeQuery(query);
-};
-
-const GetAdminTourCreationById = (id) => {
-    const query = `SELECT * FROM admin_tour_creations WHERE id = ?`;
-    return executeQuery(query, [id]);
-};
-
-const GetToursCreatedByAdmin = (adminId) => {
-    const query = `SELECT * FROM admin_tour_creations WHERE admin_id = ?`;
-    return executeQuery(query, [adminId]);
-};
-
-const DeleteAdminTourCreation = (id) => {
-    const query = `DELETE FROM admin_tour_creations WHERE id = ?`;
-    return executeQuery(query, [id]);
-};
-
-// Export all functions
+// Exporting functions
 
 module.exports = {
-    executeQuery,
     CreateUser,
     GetUsers,
     GetUserById,
     GetUserByEmail,
-    GetUsersByType,
-    UpdateUser,
-    DeleteUser,
     CreateTour,
-    GetTours,
-    GetTourById,
-    GetToursByStatus,
-    GetToursWithGuideInfo,
     UpdateTour,
-    DeleteTour,
-    CreateTourGuide,
     GetTourGuides,
-    GetTourGuideById,
-    UpdateTourGuide,
-    DeleteTourGuide,
+    CreateTourGuide,
     CreateTourBooking,
-    GetTourBookings,
-    GetTourBookingById,
-    GetBookingsByUserId,
-    GetBookingsByTourId,
-    UpdateTourBooking,
-    DeleteTourBooking,
     CreatePayment,
-    GetPayments,
-    GetPaymentById,
-    GetPaymentsByBookingId,
-    UpdatePayment,
-    DeletePayment,
     LogAdminTourCreation,
-    GetAdminTourCreations,
-    GetAdminTourCreationById,
-    GetToursCreatedByAdmin,
-    DeleteAdminTourCreation
+    GetTours,
+    GetTourGuideById,
+    DeleteTour,
 };

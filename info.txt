@@ -1,0 +1,37 @@
+const handleCreateTour = async (e) => {
+    e.preventDefault();
+    try {
+        const formattedStartDate = moment(newTour.startDate, 'YYYY-MM-DD').format('YYYY-MM-DD');
+        const formattedEndDate = moment(newTour.endDate, 'YYYY-MM-DD').format('YYYY-MM-DD');
+
+        // Assuming media is stored in /assets/tours/
+        const imagePath = selectedMedia ? `/assets/tours/${selectedMedia}` : null;
+
+        const response = await axios.post(`${serverBaseUrl}/CreateTour`, {
+            ...newTour,
+            image: imagePath, // Pass full image path
+            startDate: formattedStartDate,
+            endDate: formattedEndDate,
+        });
+
+        if (response.data.success) {
+            fetchTours(); // Refresh tours list
+            setNewTour({
+                        title: '',
+                        description: '',
+                        location: '',
+                        price: '',
+                        availableSeats: '',
+                        startDate: '',
+                        endDate: '',
+                        image: '',
+                        guideId: '',
+                        featured: false,
+                        status: 'available'
+                    });
+            setActiveTab('editTour');
+        }
+    } catch (error) {
+        console.error('Error creating tour:', error);
+    }
+};
