@@ -2,22 +2,35 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// Helper function to format date to dd/mm/yyyy
+const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+};
+
+// Helper function to get full image URL from the public assets directory
+const getImageUrl = (imageUrl) => {
+    return `${process.env.PUBLIC_URL}/assets/tours/${imageUrl}`;
+};
+
 const TourDetailsCard = ({ tours, onOverlayOpenChange }) => {
     const [selectedTour, setSelectedTour] = useState(null);
-    const navigate = useNavigate(); // Initialize the navigate function
+    const navigate = useNavigate();
 
     const openTourDetails = (tour) => {
         setSelectedTour(tour);
-        onOverlayOpenChange(true); // Notify parent that overlay is open
+        onOverlayOpenChange(true);
     };
 
     const closeTourDetails = () => {
         setSelectedTour(null);
-        onOverlayOpenChange(false); // Notify parent that overlay is closed
+        onOverlayOpenChange(false);
     };
 
     const handleBookNow = () => {
-        // Navigate to the payment page with the selected tour data
         navigate('/payment', { state: { tour: selectedTour } });
     };
 
@@ -29,13 +42,19 @@ const TourDetailsCard = ({ tours, onOverlayOpenChange }) => {
                         key={tour.id} 
                         className="bg-white text-gray-900 rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-2xl"
                     >
-                        <img src={tour.image} alt={tour.title} className="h-48 w-full object-cover" />
+                        <img 
+                            src={getImageUrl(tour.image_url)} // Construct the full image URL 
+                            alt={tour.title} 
+                            className="h-48 w-full object-cover" 
+                        />
                         <div className="p-4">
                             <h3 className="text-xl font-bold mb-2">{tour.title}</h3>
                             <p className="text-gray-700 mb-4">{tour.description}</p>
                             <p className="mb-2">Location: {tour.location}</p>
                             <p className="mb-2">Price: ${tour.price}</p>
-                            <p className="mb-2">Seats Available: {tour.availableSeats}</p>
+                            <p className="mb-2">Seats Available: {tour.available_seats}</p>
+                            <p className="mb-2">Start Date: {formatDate(tour.start_date)}</p>
+                            <p className="mb-2">End Date: {formatDate(tour.end_date)}</p>
                             <button 
                                 className="mt-4 w-full bg-blue-600 text-white px-4 py-2 rounded-full transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg hover:shadow-blue-500/50"
                                 onClick={() => openTourDetails(tour)}
@@ -55,17 +74,21 @@ const TourDetailsCard = ({ tours, onOverlayOpenChange }) => {
                         onClick={closeTourDetails}
                     ></div>
                     <div className="relative z-10 bg-white text-black rounded-lg shadow-lg p-8 w-11/12 md:w-2/3 lg:w-1/2 max-h-[80vh] overflow-y-auto">
-                        <img src={selectedTour.image} alt={selectedTour.title} className="w-full h-64 object-cover rounded-lg mb-4" />
+                        <img 
+                            src={getImageUrl(selectedTour.image_url)} // Construct the full image URL
+                            alt={selectedTour.title} 
+                            className="w-full h-64 object-cover rounded-lg mb-4" 
+                        />
                         <h2 className="text-2xl font-bold mb-4">{selectedTour.title}</h2>
                         <p className="mb-4">{selectedTour.description}</p>
                         <p><strong>Location:</strong> {selectedTour.location}</p>
                         <p><strong>Price:</strong> ${selectedTour.price}</p>
-                        <p><strong>Seats Available:</strong> {selectedTour.availableSeats}</p>
-                        <p><strong>Start Date:</strong> {selectedTour.startDate}</p>
-                        <p><strong>End Date:</strong> {selectedTour.endDate}</p>
+                        <p><strong>Seats Available:</strong> {selectedTour.available_seats}</p>
+                        <p><strong>Start Date:</strong> {formatDate(selectedTour.start_date)}</p>
+                        <p><strong>End Date:</strong> {formatDate(selectedTour.end_date)}</p>
                         <button 
                             className="sticky bottom-0 w-full mt-4 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-all duration-300"
-                            onClick={handleBookNow} // Redirect to payment page
+                            onClick={handleBookNow}
                         >
                             Book Now
                         </button>

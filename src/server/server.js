@@ -130,6 +130,7 @@ app.post('/UpdateTour', async (req, res) => {
         id,
         title,
         description,
+        location, // Include location in the request body
         price,
         available_seats,
         start_date,
@@ -142,13 +143,13 @@ app.post('/UpdateTour', async (req, res) => {
     } = req.body;
 
     // Input validation - Ensure required fields are present
-    if (!id || !title || !description || !price || !available_seats || !start_date || !end_date || !guide_id || !status) {
+    if (!id || !title || !description || !location || !price || !available_seats || !start_date || !end_date || !guide_id || !status) {
         return res.status(400).json({ success: false, message: 'Missing required fields.' });
     }
 
     try {
         // Call the UpdateTour function to update the tour in the database
-        await UpdateTour(id, title, description, price, available_seats, start_date, end_date, image_url, guide_id, featured, status, previous_guide_id);
+        await UpdateTour(id, title, description, location, price, available_seats, start_date, end_date, image_url, guide_id, featured, status, previous_guide_id);
 
         // Send a success response
         res.status(200).json({ success: true, message: 'Tour updated successfully.' });
@@ -173,6 +174,7 @@ app.get('/GetTours', async (req, res) => {
         res.status(500).json({ success: false, message: 'Error fetching tours.' });
     }
 });
+
 
 
 app.delete('/DeleteTour/:id', async (req, res) => {

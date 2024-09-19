@@ -60,32 +60,27 @@ const EditTours = () => {
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
-        // Format the date as a local date (without time zones)
-        const formattedDate = new Intl.DateTimeFormat('en-CA').format(date); // Format as YYYY-MM-DD
-        return formattedDate;
-      };
+        return new Intl.DateTimeFormat('en-CA').format(date); // Format as YYYY-MM-DD
+    };
       
-      const handleEditTour = (tour) => {
+    const handleEditTour = (tour) => {
         setSelectedTour({
-          ...tour,
-          start_date: formatDate(tour.start_date),  // Use local date formatting
-          end_date: formatDate(tour.end_date),      // Use local date formatting
+            ...tour,
+            start_date: formatDate(tour.start_date),  // Use local date formatting
+            end_date: formatDate(tour.end_date),      // Use local date formatting
         });
         fetchTourGuideById(tour.guide_id);
         setShowEditOverlay(true);
-      };
-      
+    };
 
-      const handleSaveChanges = async () => {
+    const handleSaveChanges = async () => {
         const updatedTour = { ...selectedTour };
-    
+
+        // Ensure all fields are present when saving the tour
         try {
-            // Log the previous guide and new guide before making the request
-            console.log('Previous Guide ID:', updatedTour.previous_guide_id);
-            console.log('Current Guide ID:', updatedTour.guide_id);
-    
             await axios.post(`${serverBaseUrl}/UpdateTour`, {
                 ...updatedTour,
+                location: updatedTour.location,  // Include location in the update
                 start_date: updatedTour.start_date,  // Already in YYYY-MM-DD format
                 end_date: updatedTour.end_date       // Already in YYYY-MM-DD format
             });
@@ -96,7 +91,6 @@ const EditTours = () => {
             console.error('Error updating tour:', error);
         }
     };
-    
 
     const handleSelectGuide = async (guideId) => {
         const previousGuideId = selectedTour.guide_id;
@@ -107,7 +101,6 @@ const EditTours = () => {
         // Fetch and set the selected guide's details
         fetchTourGuideById(guideId);
     
-        // If the selected guide is different from the previous guide, update availability
         if (previousGuideId !== guideId) {
             try {
                 // Make the previous guide available, if there was a previous guide
@@ -117,7 +110,7 @@ const EditTours = () => {
                         availability_status: 'available',
                     });
                 }
-    
+
                 // Make the new guide unavailable
                 await axios.post(`${serverBaseUrl}/UpdateTourGuide`, {
                     id: guideId,
@@ -128,8 +121,6 @@ const EditTours = () => {
             }
         }
     };
-    
-    
 
     const handleDeleteTour = async (tourId) => {
         const confirmDelete = window.confirm('Are you sure you want to delete this tour?');
@@ -212,6 +203,14 @@ const EditTours = () => {
                         <textarea
                             value={selectedTour.description}
                             onChange={(e) => setSelectedTour({ ...selectedTour, description: e.target.value })}
+                            className="w-full mb-4 px-3 py-2 border rounded-lg focus:outline-none"
+                        />
+
+                        <label className="block mb-2">Location:</label>
+                        <input
+                            type="text"
+                            value={selectedTour.location}  // Populate with existing location
+                            onChange={(e) => setSelectedTour({ ...selectedTour, location: e.target.value })}  // Allow location to be edited
                             className="w-full mb-4 px-3 py-2 border rounded-lg focus:outline-none"
                         />
 
