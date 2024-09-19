@@ -129,6 +129,10 @@ const UpdateTour = async (
             WHERE id = ?`;
         await connection.query(tourQuery, [title, description, price, available_seats, formattedStartDate, formattedEndDate, image_url, guide_id, featured, status, id]);
 
+        // Log previous and new guide IDs
+        console.log('Previous Guide ID:', previous_guide_id);
+        console.log('New Guide ID:', guide_id);
+
         // Handle guide availability updates
         if (previous_guide_id && previous_guide_id !== guide_id) {
             // Make the previous guide available, but only update the availability_status
@@ -153,6 +157,7 @@ const UpdateTour = async (
         connection.release();
     }
 };
+
 
 
 const GetBookingsByTourId = (tourId) => {
@@ -219,13 +224,42 @@ const DeleteTourGuide = async (id) => {
 
 
 const UpdateTourGuide = (id, name, email, phone_number, experience_years, availability_status) => {
+    const fields = [];
+    const values = [];
+
+    if (name) {
+        fields.push('name = ?');
+        values.push(name);
+    }
+    if (email) {
+        fields.push('email = ?');
+        values.push(email);
+    }
+    if (phone_number) {
+        fields.push('phone_number = ?');
+        values.push(phone_number);
+    }
+    if (experience_years) {
+        fields.push('experience_years = ?');
+        values.push(experience_years);
+    }
+    if (availability_status) {
+        fields.push('availability_status = ?');
+        values.push(availability_status);
+    }
+
+    // Add the id at the end for the WHERE clause
+    values.push(id);
+
     const query = `
         UPDATE tour_guides
-        SET name = ?, email = ?, phone_number = ?, experience_years = ?, availability_status = ?
+        SET ${fields.join(', ')}
         WHERE id = ?
     `;
-    return executeQuery(query, [name, email, phone_number, experience_years, availability_status, id]);
+
+    return executeQuery(query, values);
 };
+
 
 
 const GetTourGuides = () => {

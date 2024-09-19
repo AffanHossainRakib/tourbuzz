@@ -76,10 +76,14 @@ const EditTours = () => {
       };
       
 
-    const handleSaveChanges = async () => {
+      const handleSaveChanges = async () => {
         const updatedTour = { ...selectedTour };
-
+    
         try {
+            // Log the previous guide and new guide before making the request
+            console.log('Previous Guide ID:', updatedTour.previous_guide_id);
+            console.log('Current Guide ID:', updatedTour.guide_id);
+    
             await axios.post(`${serverBaseUrl}/UpdateTour`, {
                 ...updatedTour,
                 start_date: updatedTour.start_date,  // Already in YYYY-MM-DD format
@@ -92,26 +96,28 @@ const EditTours = () => {
             console.error('Error updating tour:', error);
         }
     };
+    
 
     const handleSelectGuide = async (guideId) => {
         const previousGuideId = selectedTour.guide_id;
     
-        // Update the selected guide in the tour without clearing other fields
+        // Set the new guide in the selected tour
         setSelectedTour((prev) => ({ ...prev, guide_id: guideId }));
     
         // Fetch and set the selected guide's details
         fetchTourGuideById(guideId);
     
-        // Only proceed with guide availability update if the selected guide is different from the previous guide
+        // If the selected guide is different from the previous guide, update availability
         if (previousGuideId !== guideId) {
             try {
-                // Make the previous guide available
+                // Make the previous guide available, if there was a previous guide
                 if (previousGuideId) {
                     await axios.post(`${serverBaseUrl}/UpdateTourGuide`, {
                         id: previousGuideId,
                         availability_status: 'available',
                     });
                 }
+    
                 // Make the new guide unavailable
                 await axios.post(`${serverBaseUrl}/UpdateTourGuide`, {
                     id: guideId,
@@ -122,6 +128,7 @@ const EditTours = () => {
             }
         }
     };
+    
     
 
     const handleDeleteTour = async (tourId) => {
