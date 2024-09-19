@@ -10,8 +10,9 @@ const GuideSearch = ({ guides, onSelect }) => {
         setShowDropdown(true); // Show dropdown when typing
     };
 
-    // Filter guides based on search term
+    // Filter guides based on search term and availability status
     const filteredGuides = guides.filter((guide) =>
+        guide.availability_status === 'available' &&
         guide.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
