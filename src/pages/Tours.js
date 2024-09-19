@@ -4,13 +4,22 @@ import Navbar from '../components/Navbar';
 import TourDetailsCard from '../components/TourDetailsCard';
 import axios from 'axios'; // To fetch tours data
 
+// Helper function to format date (yyyy-mm-dd)
+const formatServerDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
 const Tours = () => {
     const [filters, setFilters] = useState({
         search: '',     // Add search for title
         location: '',
         maxPrice: '',
         seats: '',
-        status: ''      // Add status filter
+        startDate: ''   // Replaced status with startDate
     });
     const [tours, setTours] = useState([]); // Store the fetched tours data
     const [isOverlayOpen, setIsOverlayOpen] = useState(false);
@@ -47,9 +56,9 @@ const Tours = () => {
         const matchesLocation = filters.location === '' || tour.location.toLowerCase() === filters.location.toLowerCase(); // Location filter
         const matchesMaxPrice = filters.maxPrice === '' || tour.price <= Number(filters.maxPrice); // Max price filter
         const matchesSeats = filters.seats === '' || tour.available_seats >= Number(filters.seats); // Seats filter
-        const matchesStatus = filters.status === '' || tour.status === filters.status; // Status filter ('available' or 'booked')
+        const matchesStartDate = filters.startDate === '' || formatServerDate(tour.start_date) >= filters.startDate; // Start date filter
 
-        return matchesTitle && matchesLocation && matchesMaxPrice && matchesSeats && matchesStatus;
+        return matchesTitle && matchesLocation && matchesMaxPrice && matchesSeats && matchesStartDate;
     });
 
     return (

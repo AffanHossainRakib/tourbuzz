@@ -63,19 +63,16 @@ const Filters = ({ filters, handleFilterChange }) => {
                 />
             </div>
 
-            {/* Status Filter */}
+            {/* Start Date Filter */}
             <div className="mb-4">
-                <label className="block text-gray-300 mb-2">Status</label>
-                <select 
-                    name="status"
-                    value={filters.status}
+                <label className="block text-gray-300 mb-2">Start Date</label>
+                <input
+                    type="date"
+                    name="startDate"
+                    value={filters.startDate}
                     onChange={handleFilterChange}
                     className="w-full px-3 py-2 rounded-full border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white"
-                >
-                    <option value="">Any</option>
-                    <option value="available">Available</option>
-                    <option value="booked">Booked</option>
-                </select>
+                />
             </div>
         </div>
     );
