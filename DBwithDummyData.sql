@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 19, 2024 at 06:28 PM
+-- Generation Time: Sep 19, 2024 at 10:47 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,32 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `tourbuzz1`
 --
-
--- --------------------------------------------------------
-
---
--- Table structure for table `admin_tour_creations`
---
-
-CREATE TABLE `admin_tour_creations` (
-  `id` int(11) NOT NULL,
-  `admin_id` int(11) NOT NULL,
-  `tour_id` int(11) NOT NULL,
-  `creation_date` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `media_assets`
---
-
-CREATE TABLE `media_assets` (
-  `id` int(11) NOT NULL,
-  `file_name` varchar(255) NOT NULL,
-  `file_path` varchar(255) NOT NULL,
-  `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -83,6 +57,18 @@ CREATE TABLE `tours` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `tours`
+--
+
+INSERT INTO `tours` (`id`, `title`, `description`, `location`, `price`, `available_seats`, `start_date`, `end_date`, `image_url`, `guide_id`, `featured`, `status`, `created_at`) VALUES
+(7, 'Tropical Beach Getaway', 'Enjoy a relaxing trip to a serene beach with crystal clear waters.', 'Beach', 1500.00, 25, '2024-10-01', '2024-10-04', 'cox2.jpg', 18, 1, 'available', '2024-09-19 20:18:59'),
+(8, 'Mountain Hiking Adventure', 'Embark on an exhilarating hiking adventure through scenic mountain trails.', 'Mountain', 1200.00, 15, '2024-09-25', '2024-09-28', 'sajek1 copy.png', 19, 1, 'available', '2024-09-19 20:18:59'),
+(9, 'Lakeside Retreat', 'Experience the tranquility of a peaceful lakeside retreat.', 'Lake', 800.00, 10, '2024-10-05', '2024-10-08', 'haor.jpg', 20, 1, 'available', '2024-09-19 20:18:59'),
+(10, 'Sunny Beach Vacation', 'Bask in the sun and enjoy beachside activities at this top vacation spot.', 'Beach', 1800.00, 35, '2024-09-30', '2024-10-02', 'cox1.jpg', 21, 1, 'available', '2024-09-19 20:18:59'),
+(11, 'Mountain Climbing Expedition', 'Challenge yourself with a mountain climbing expedition suited for adventure seekers.', 'Mountain', 2000.00, 12, '2024-09-27', '2024-09-30', 'sajek2.png', 22, 1, 'available', '2024-09-19 20:18:59'),
+(15, 'Going to Haor', 'Hakaluki haro tour for 3 days 2 night.', 'Lake', 5000.00, 25, '2024-09-26', '2024-09-29', 'hakaluki.jpg', 23, 1, 'available', '2024-09-19 20:37:22');
+
 -- --------------------------------------------------------
 
 --
@@ -118,11 +104,12 @@ CREATE TABLE `tour_guides` (
 --
 
 INSERT INTO `tour_guides` (`id`, `name`, `email`, `phone_number`, `experience_years`, `availability_status`, `created_at`) VALUES
-(18, 'Guide 1', 'guide1@example.com', '123-456-7890', 5, 'available', '2024-09-19 16:17:34'),
-(19, 'Guide 2', 'guide2@example.com', '234-567-8901', 7, 'available', '2024-09-19 16:17:34'),
-(20, 'Guide 3', 'guide3@example.com', '345-678-9012', 10, 'available', '2024-09-19 16:17:34'),
-(21, 'Guide 4', 'guide4@example.com', '456-789-0123', 2, 'available', '2024-09-19 16:17:34'),
-(22, 'Guide 5', 'guide5@example.com', '567-890-1234', 8, 'unavailable', '2024-09-19 16:17:34');
+(18, 'Guide 1', 'guide1@example.com', '123-456-7890', 5, 'unavailable', '2024-09-19 16:17:34'),
+(19, 'Guide 2', 'guide2@example.com', '234-567-8901', 7, 'unavailable', '2024-09-19 16:17:34'),
+(20, 'Guide 3', 'guide3@example.com', '345-678-9012', 10, 'unavailable', '2024-09-19 16:17:34'),
+(21, 'Guide 4', 'guide4@example.com', '456-789-0123', 2, 'unavailable', '2024-09-19 16:17:34'),
+(22, 'Guide 5', 'guide5@example.com', '567-890-1234', 8, 'unavailable', '2024-09-19 16:17:34'),
+(23, 'Guide 6', 'guide6@guide.com', '012345678999', 2, 'unavailable', '2024-09-19 20:34:04');
 
 -- --------------------------------------------------------
 
@@ -144,45 +131,16 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `user_type`, `created_at`) VALUES
-(20, 'Admin 1', 'admin1@admin.com', '$2b$10$EOsbjnTpJcGAHAfdv5FxgeVxJDJfzmGUpxurnMJxEJ3I4rc7Ukp6C', 'admin', '2024-09-19 16:21:07'),
-(21, 'Lionel Messi', 'lionel.messi@example.com', '$2b$10$nx6PAYD9l0PcIfGTfO9AieWHnmJMRTb/aPxh/waYxj1pPqgguT0YK', 'user', '2024-09-19 16:22:15'),
-(22, 'Cristiano Ronaldo', 'cristiano.ronaldo@example.com', '$2b$10$ae6TjYsGoC7aaCjj6lDNm.hJoKW1lxy3llH7tMDtsFZwrBz8cTbL.', 'user', '2024-09-19 16:22:16'),
-(23, 'Neymar Jr', 'neymar.jr@example.com', '$2b$10$CoJweg2dj3ufetmVQ664ke7bOXoynviNU/wJPoB96yNQJJe0yBf2i', 'user', '2024-09-19 16:22:16'),
-(24, 'Kylian Mbappe', 'kylian.mbappe@example.com', '$2b$10$vpGLSjVa386lCECKiwhHBOjCt4xzrHnlE2.ok2LuJ7o8GRfIp9Zcq', 'user', '2024-09-19 16:22:16'),
-(25, 'Mohamed Salah', 'mohamed.salah@example.com', '$2b$10$i6yoDREf1KtVGqHCuUZBVunJmRZYNB1/aUVaceM3jYiVCaO1g1p5S', 'user', '2024-09-19 16:22:16'),
-(26, 'Kevin De Bruyne', 'kevin.debruyne@example.com', '$2b$10$v1eJDLnkh.T9WCTeC4TJU.E9h.chRRf/oJLvg47iaycxF5t1N9jOW', 'user', '2024-09-19 16:22:16'),
-(27, 'Virgil van Dijk', 'virgil.vandijk@example.com', '$2b$10$oo7XyoIdUrGoFouDILVM8uWq3qOMf.MCZDo8MPHSoktB5ir4mfiXi', 'user', '2024-09-19 16:22:16'),
-(28, 'Sadio Mane', 'sadio.mane@example.com', '$2b$10$uGxVBLeN6Bg0TiMIQyh9ue0UCSLfHB7xNexjEdiWijJEKW54YRFuW', 'user', '2024-09-19 16:22:16'),
-(29, 'Robert Lewandowski', 'robert.lewandowski@example.com', '$2b$10$lNC2J/md84GzV5ZncOJvM.MWH5WRffbDF0S1MpRQr5fUX/fSQnAxm', 'user', '2024-09-19 16:22:17'),
-(30, 'Eden Hazard', 'eden.hazard@example.com', '$2b$10$fHhUx5KFrLMMPKYee8u6G.R2ZkVAGT2YmSm4..89laejaDagpZtnq', 'user', '2024-09-19 16:22:17'),
-(31, 'Paul Pogba', 'paul.pogba@example.com', '$2b$10$lYOrea577hTjST0MfiRDyeixomh5dpR42tVPA5xCqtx04BTqh1s/C', 'user', '2024-09-19 16:22:17'),
-(32, 'Antoine Griezmann', 'antoine.griezmann@example.com', '$2b$10$z5QgEuZ9ePyJtfoHTfAyOunJbiYpA/R7FINpNTsjwSKhhuywUkuKe', 'user', '2024-09-19 16:22:17'),
-(33, 'Zlatan Ibrahimovic', 'zlatan.ibrahimovic@example.com', '$2b$10$dZnSLrwfy.sHFn6UEQdRsO4T16UwxSUMECyT6skqTcp0.JEVmHDVG', 'user', '2024-09-19 16:22:17'),
-(34, 'Gareth Bale', 'gareth.bale@example.com', '$2b$10$WtUnrwMlM.ZgOeba.unmSekfYYgNNG7g5fmXUSdtP9HfYXaeZl4hS', 'user', '2024-09-19 16:22:17'),
-(35, 'Luka Modric', 'luka.modric@example.com', '$2b$10$PAmmni0k1LR4pUb/2Xfz7exrUnxWEzhm9jnAdS86M3tjOuTGZWOtC', 'user', '2024-09-19 16:22:17'),
-(36, 'Sergio Ramos', 'sergio.ramos@example.com', '$2b$10$N.OjF2J1XfEO1DprpDBGwe5XYOTXnSB1E6M4E474tDCVwUZQCWc7u', 'user', '2024-09-19 16:22:18'),
-(37, 'Karim Benzema', 'karim.benzema@example.com', '$2b$10$WHjYe0HvLYHQyUSiix3PmOo7ma5II3enu4hv.VpRk6FEEnDnybSTa', 'user', '2024-09-19 16:22:18'),
-(38, 'Gerard Pique', 'gerard.pique@example.com', '$2b$10$eminCJHZZLzgL/b.9iITzOcw6Aq0rh7hPg8GhCrf7WWP1zbIEkg9u', 'user', '2024-09-19 16:22:18'),
-(39, 'Thiago Silva', 'thiago.silva@example.com', '$2b$10$ewIw7aL6tYIJYkBT17OqXO864ilgK7BLZiU8WX3V8Kami7ZL3EDJe', 'user', '2024-09-19 16:22:18'),
-(40, 'Manuel Neuer', 'manuel.neuer@example.com', '$2b$10$8bWwOAquw1Im6MgL5qmq/esxsfkSV6wQEg/LeM1M9yobcdYCecOv.', 'user', '2024-09-19 16:22:18');
+(20, 'Admin1', 'admin1@admin.com', '$2b$10$EOsbjnTpJcGAHAfdv5FxgeVxJDJfzmGUpxurnMJxEJ3I4rc7Ukp6C', 'admin', '2024-09-19 16:21:07'),
+(42, 'USER1', 'user1@user.com', '$2b$10$yxdFwrzhhUHnmvap/AeJguWPiMlAr1S2lAbEXKOaxwMx.NW63zHA.', 'user', '2024-09-19 20:44:39'),
+(43, 'USER2', 'user2@user.com', '$2b$10$Qw9zrZs3FQgnZx44iyLd7OWjPTeNocI2.piaPqY0F1hQS3fg0FMGS', 'user', '2024-09-19 20:44:53'),
+(44, 'USER3', 'user3@user.com', '$2b$10$wNpr7eSNsQo5rVt.RSNPief0nT/yueCFYXgqNRBiO1fZWqrXn0HxK', 'user', '2024-09-19 20:45:11'),
+(45, 'USER4', 'user4@user.com', '$2b$10$T.nBplqEtnr80fk/HdENL.ijVVh1X8YnT8ud.XrogxF4/1vpzsmU6', 'user', '2024-09-19 20:45:39'),
+(47, 'USER5', 'user5@user.com', '$2b$10$OithFIG6tX5WU4NrhUbZP.SG0m/iz3MjH7OJKD.egoMc0w5yWwQTO', 'user', '2024-09-19 20:46:38');
 
 --
 -- Indexes for dumped tables
 --
-
---
--- Indexes for table `admin_tour_creations`
---
-ALTER TABLE `admin_tour_creations`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `admin_id` (`admin_id`),
-  ADD KEY `tour_id` (`tour_id`);
-
---
--- Indexes for table `media_assets`
---
-ALTER TABLE `media_assets`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `payments`
@@ -225,18 +183,6 @@ ALTER TABLE `users`
 --
 
 --
--- AUTO_INCREMENT for table `admin_tour_creations`
---
-ALTER TABLE `admin_tour_creations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `media_assets`
---
-ALTER TABLE `media_assets`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
@@ -246,7 +192,7 @@ ALTER TABLE `payments`
 -- AUTO_INCREMENT for table `tours`
 --
 ALTER TABLE `tours`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `tour_bookings`
@@ -258,24 +204,17 @@ ALTER TABLE `tour_bookings`
 -- AUTO_INCREMENT for table `tour_guides`
 --
 ALTER TABLE `tour_guides`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- Constraints for dumped tables
 --
-
---
--- Constraints for table `admin_tour_creations`
---
-ALTER TABLE `admin_tour_creations`
-  ADD CONSTRAINT `admin_tour_creations_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `admin_tour_creations_ibfk_2` FOREIGN KEY (`tour_id`) REFERENCES `tours` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `payments`
