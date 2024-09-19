@@ -104,6 +104,7 @@ const UpdateTour = async (
     id,
     title,
     description,
+    location,  // Add location to the parameters
     price,
     available_seats,
     start_date,
@@ -122,12 +123,12 @@ const UpdateTour = async (
         const formattedStartDate = start_date.split('T')[0];  // Extract only the date part
         const formattedEndDate = end_date.split('T')[0];      // Extract only the date part
 
-        // Update tour details
+        // Update tour details, including the location
         const tourQuery = `
             UPDATE tours 
-            SET title = ?, description = ?, price = ?, available_seats = ?, start_date = ?, end_date = ?, image_url = ?, guide_id = ?, featured = ?, status = ? 
+            SET title = ?, description = ?, location = ?, price = ?, available_seats = ?, start_date = ?, end_date = ?, image_url = ?, guide_id = ?, featured = ?, status = ? 
             WHERE id = ?`;
-        await connection.query(tourQuery, [title, description, price, available_seats, formattedStartDate, formattedEndDate, image_url, guide_id, featured, status, id]);
+        await connection.query(tourQuery, [title, description, location, price, available_seats, formattedStartDate, formattedEndDate, image_url, guide_id, featured, status, id]);
 
         // Log previous and new guide IDs
         console.log('Previous Guide ID:', previous_guide_id);
@@ -157,6 +158,7 @@ const UpdateTour = async (
         connection.release();
     }
 };
+
 
 
 

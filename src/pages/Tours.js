@@ -1,8 +1,9 @@
 // src/pages/Tours.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Filters from '../components/Filters';
 import Navbar from '../components/Navbar';
 import TourDetailsCard from '../components/TourDetailsCard';
+import axios from 'axios'; // To fetch tours data
 
 const Tours = () => {
     const [filters, setFilters] = useState({
@@ -10,7 +11,22 @@ const Tours = () => {
         maxPrice: '',
         seats: ''
     });
+    const [tours, setTours] = useState([]); // Store the fetched tours data
     const [isOverlayOpen, setIsOverlayOpen] = useState(false);
+
+    // Fetch tours data from the backend
+    useEffect(() => {
+        const fetchTours = async () => {
+            try {
+                const response = await axios.get('http://localhost:5001/GetTours'); // Call the backend to fetch tours
+                setTours(response.data); // Store fetched tours in state
+            } catch (error) {
+                console.error('Error fetching tours:', error);
+            }
+        };
+
+        fetchTours(); // Call the function when the component mounts
+    }, []); // Empty dependency array ensures it runs only once on mount
 
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
@@ -19,59 +35,6 @@ const Tours = () => {
             [name]: value,
         }));
     };
-
-    // Example tours data
-    const tours = [
-        { 
-            id: 1, 
-            title: 'Beach Paradise', 
-            description: 'A wonderful beach tour...', 
-            location: 'Beach', 
-            price: 300, 
-            seats: 10, 
-            startDate: '2024-09-01', 
-            endDate: '2024-09-10',
-            availableSeats: 10,
-            image: '/assets/tours/cox2.jpg' // Add tour image URL
-        },
-        {
-            id: 2,
-            title: 'Mountain Adventure',
-            description: 'An exciting mountain tour...',
-            location: 'Mountain',
-            price: 500,
-            seats: 15,
-            startDate: '2024-09-15',
-            endDate: '2024-09-25',
-            availableSeats: 15,
-            image: '/assets/tours/sajek1.png' // Add tour image URL
-        },
-        {
-            id: 3,
-            title: 'Jungle Safari',
-            description: 'A thrilling jungle tour...',
-            location: 'Jungle',
-            price: 400,
-            seats: 12,
-            startDate: '2024-10-01',
-            endDate: '2024-10-10',
-            availableSeats: 12,
-            image: '/assets/tours/sundarbans1.jpg' // Add tour image URL
-        },
-        {
-            id: 4,
-            title: 'Lake Expedition',
-            description: 'A peaceful lake tour...',
-            location: 'Lake',
-            price: 350,
-            seats: 8,
-            startDate: '2024-10-15',
-            endDate: '2024-10-25',
-            availableSeats: 8,
-            image: '/assets/tours/haor.jpg' // Add tour image URL
-        },
-        // ... other tours ...
-    ];
 
     const handleOverlayOpenChange = (isOpen) => {
         setIsOverlayOpen(isOpen);
@@ -96,6 +59,7 @@ const Tours = () => {
                 {/* Tours Section */}
                 <div className="flex-grow">
                     <h2 className="text-3xl mb-4">All Tours</h2>
+                    {/* Pass fetched tours to TourDetailsCard */}
                     <TourDetailsCard tours={tours} onOverlayOpenChange={handleOverlayOpenChange} />
                 </div>
             </div>
