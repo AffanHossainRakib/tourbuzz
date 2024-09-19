@@ -95,17 +95,24 @@ const EditTours = () => {
 
     const handleSelectGuide = async (guideId) => {
         const previousGuideId = selectedTour.guide_id;
+    
+        // Update the selected guide in the tour without clearing other fields
         setSelectedTour((prev) => ({ ...prev, guide_id: guideId }));
+    
+        // Fetch and set the selected guide's details
         fetchTourGuideById(guideId);
-
+    
+        // Only proceed with guide availability update if the selected guide is different from the previous guide
         if (previousGuideId !== guideId) {
             try {
+                // Make the previous guide available
                 if (previousGuideId) {
                     await axios.post(`${serverBaseUrl}/UpdateTourGuide`, {
                         id: previousGuideId,
                         availability_status: 'available',
                     });
                 }
+                // Make the new guide unavailable
                 await axios.post(`${serverBaseUrl}/UpdateTourGuide`, {
                     id: guideId,
                     availability_status: 'unavailable',
@@ -115,6 +122,7 @@ const EditTours = () => {
             }
         }
     };
+    
 
     const handleDeleteTour = async (tourId) => {
         const confirmDelete = window.confirm('Are you sure you want to delete this tour?');
