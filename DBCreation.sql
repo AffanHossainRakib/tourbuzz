@@ -37,8 +37,6 @@ CREATE TABLE IF NOT EXISTS tours (
     FOREIGN KEY (guide_id) REFERENCES tour_guides(id) ON DELETE SET NULL
 );
 
-
-
 -- Tour Bookings Table
 CREATE TABLE IF NOT EXISTS tour_bookings (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -50,14 +48,6 @@ CREATE TABLE IF NOT EXISTS tour_bookings (
     FOREIGN KEY (tour_id) REFERENCES tours(id) ON DELETE CASCADE
 );
 
--- Media Assets Table
-CREATE TABLE IF NOT EXISTS media_assets (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    file_name VARCHAR(255) NOT NULL,
-    file_path VARCHAR(255) NOT NULL, -- Path to the file
-    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
 -- Payments Table
 CREATE TABLE IF NOT EXISTS payments (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -67,15 +57,3 @@ CREATE TABLE IF NOT EXISTS payments (
     payment_status ENUM('pending', 'completed', 'failed') NOT NULL DEFAULT 'completed',
     FOREIGN KEY (booking_id) REFERENCES tour_bookings(id) ON DELETE CASCADE
 );
-
--- Admin Tour Creation Table
-CREATE TABLE IF NOT EXISTS admin_tour_creations (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    admin_id INT NOT NULL,
-    tour_id INT NOT NULL,
-    creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (admin_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (tour_id) REFERENCES tours(id) ON DELETE CASCADE
-);
-
-
