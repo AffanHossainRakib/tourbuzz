@@ -208,7 +208,7 @@ const SearchBar = ({ onOverlayChange }) => {
                             />
                             
                             {/* Search Results */}
-                            <div className="overflow-auto h-3/4">
+                            <div className="flex-grow overflow-y-auto max-h-[60vh]">
                                 {filteredTours.length > 0 ? (
                                     filteredTours.map((tour) => (
                                         <div key={tour.id} className="flex items-center mb-4 bg-gray-700 p-4 rounded-lg">
