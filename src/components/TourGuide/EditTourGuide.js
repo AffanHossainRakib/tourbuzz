@@ -125,6 +125,7 @@ const EditTourGuide = () => {
                                 <p className="font-medium">{guide.name}</p>
                                 <p className="text-sm text-gray-600">{guide.email}</p>
                                 <p className="text-sm text-gray-600">{guide.phone_number}</p>
+                                <p className="text-sm text-gray-600">{guide.availability_status}</p>
                                 <div className="flex justify-between mt-2">
                                     <button
                                         onClick={(e) => {
