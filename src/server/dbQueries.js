@@ -26,6 +26,31 @@ const CreateUser = async (name, email, password, user_type = 'user') => {
     }
 };
 
+// dbQueries.js
+
+const UpdateUserProfile = async (email, updatedFields) => {
+    const fields = [];
+    const values = [];
+
+    // Dynamically build the query based on the fields to update
+    if (updatedFields.email) {
+        fields.push('email = ?');
+        values.push(updatedFields.email);
+    }
+    if (updatedFields.password) {
+        fields.push('password = ?');
+        values.push(updatedFields.password);
+    }
+
+    // Add the original email to the values array for the WHERE clause
+    values.push(email);
+
+    const query = `UPDATE users SET ${fields.join(', ')} WHERE email = ?`;
+
+    return executeQuery(query, values);
+};
+
+
 const GetUsers = () => {
     const query = `SELECT * FROM users`;
     return executeQuery(query);
@@ -369,4 +394,5 @@ module.exports = {
     UploadMedia,
     DeleteMedia,
     GetBookingsByTourId,
+    UpdateUserProfile,
 };

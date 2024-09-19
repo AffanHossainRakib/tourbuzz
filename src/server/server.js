@@ -25,7 +25,7 @@ const {
     DeleteTourGuide,
     DeleteUser,
     GetBookingsByTourId,
-    
+    UpdateUserProfile,
 } = require('./dbQueries');
 
 const app = express();
@@ -56,6 +56,29 @@ app.get('/GetUsers', async (req, res) => {
     }
 });
 
+// server.js
+
+// Update the route to fetch user profile by email
+// server.js
+
+// Route to fetch user profile by email
+app.get('/GetUserProfile/:email', async (req, res) => {
+    const { email } = req.params;
+    try {
+        const users = await GetUserByEmail(email);
+        if (users.length > 0) {
+            res.status(200).json(users[0]);  // Return the first matching user
+        } else {
+            res.status(404).json({ success: false, message: 'User not found.' });
+        }
+    } catch (err) {
+        console.error('GetUserProfile Error:', err);
+        res.status(500).json({ success: false, message: 'Error fetching user profile.' });
+    }
+});
+
+
+
 app.get('/GetUserById/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -66,6 +89,33 @@ app.get('/GetUserById/:id', async (req, res) => {
         res.status(500).json({ success: false, message: 'Error fetching user.' });
     }
 });
+
+
+// server.js
+
+// Route to update user profile (email and password)
+app.post('/UpdateUserProfile', async (req, res) => {
+    const { email, newEmail, newPassword } = req.body;
+    
+    if (!email || (!newEmail && !newPassword)) {
+        return res.status(400).json({ success: false, message: 'Missing required fields.' });
+    }
+
+    try {
+        const updatedFields = {};
+        if (newEmail) updatedFields.email = newEmail;
+        if (newPassword) updatedFields.password = await bcrypt.hash(newPassword, 10); // Hash the new password
+
+        // Call the database query to update the user
+        await UpdateUserProfile(email, updatedFields);
+        
+        res.status(200).json({ success: true, message: 'Profile updated successfully.' });
+    } catch (err) {
+        console.error('UpdateUserProfile Error:', err);
+        res.status(500).json({ success: false, message: 'Error updating profile.' });
+    }
+});
+
 
 app.post('/DeleteUser', async (req, res) => {
     const { id } = req.body;  // Assuming the user ID is sent in the request body
@@ -388,3 +438,11 @@ app.post('/DeleteMedia', async (req, res) => {
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
+
+
+
+
+
+
+
+
