@@ -11,10 +11,11 @@ const GuideSearch = ({ guides, onSelect }) => {
     };
 
     // Filter guides based on search term and availability status
-    const filteredGuides = guides.filter((guide) =>
-        guide.availability_status === 'available' &&
-        guide.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredGuides = guides
+        .filter((guide) => guide.availability_status === 'available') // Filter out unavailable guides
+        .filter((guide) =>
+            guide.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
 
     // Handle guide selection
     const handleGuideSelect = (guide) => {
