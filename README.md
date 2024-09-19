@@ -1,70 +1,86 @@
-# Getting Started with Create React App
+# 🚀 TourBuzz Project
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Welcome to the **TourBuzz** project! This repository is designed to help you set up your development environment seamlessly. Follow the steps below to get started quickly.
 
-## Available Scripts
+## 📋 Prerequisites
 
-In the project directory, you can run:
+Before you begin, ensure you have the following installed on your machine:
 
-### `npm start`
+- [Node.js](https://nodejs.org/) 
+- [XAMPP](https://www.apachefriends.org/index.html)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🛠️ Setting Up the Project for the First Time
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Follow these steps to set up the project:
 
-### `npm test`
+1. **Clone the Repository**
+```bash
+git clone <repository-url>
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. Open the project in a code editor, i.e. VSCode.
 
-### `npm run build`
+3. Open a **terminal** in the **root directory** of the project, if you are using VSCode, try this shortcut to open a terminal
+```bash
+Ctrl + Shift + `
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+4. **Install the necessary Node packages** by running the following command:
+```bash
+   npm install
+```
+*It might take a while to download all the node packages for the first run.*
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+5. Open XAMPP, start Apache, & MySQL.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+# If you don’t have a password set for MySQL, follow this.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+6. First login by,
+```shell
+mysql -u root -p
+```
+For the password just press enter
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+7. Then set passwordby,
+```
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'Pass123123@@';
+```
+8. Then do flush prvilileges
+```
+FLUSH PRIVILEGES;
+```
+9. Go to this location 
+```
+C:\xampp\phpMyAdmin
+``` 
+and edit the *config.inc.php* file accordingly.
+Change this 
+```
+$cfg['Servers'][$i]['password'] = '';
+```
+to this 
+```
+$cfg['Servers'][$i]['password'] = 'Pass123123@@';
+```
+10. Now on the XAMPP control panel click on **Admin** in the MySQL row. It will
+open admin panel in the browser.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+11. Click on New to create a new **Database** give name 
+```tourbuzz1```
+12. Now go to import, and import the ```DBCreation.sql``` file from the Project Directory.
+13. Now on that terminal opened in the Code Editor, change directory to
+```cd src/server/```
+Then run,
+```shell
+node server.js
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-## Learn More
+14. Open another terminal by Ctrl + Shift + ` and this time give the command
+```shell
+npm start
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+*Caution: It might take some time in every step to set up for the first time.*
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
