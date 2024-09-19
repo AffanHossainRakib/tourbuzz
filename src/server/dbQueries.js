@@ -122,6 +122,7 @@ const UpdateTour = async (
         const formattedStartDate = start_date.split('T')[0];  // Extract only the date part
         const formattedEndDate = end_date.split('T')[0];      // Extract only the date part
 
+        // Update tour details
         const tourQuery = `
             UPDATE tours 
             SET title = ?, description = ?, price = ?, available_seats = ?, start_date = ?, end_date = ?, image_url = ?, guide_id = ?, featured = ?, status = ? 
@@ -130,11 +131,11 @@ const UpdateTour = async (
 
         // Handle guide availability updates
         if (previous_guide_id && previous_guide_id !== guide_id) {
-            // Make the previous guide available
+            // Make the previous guide available, but only update the availability_status
             const previousGuideQuery = `UPDATE tour_guides SET availability_status = 'available' WHERE id = ?`;
             await connection.query(previousGuideQuery, [previous_guide_id]);
 
-            // Make the new guide unavailable
+            // Make the new guide unavailable, but only update the availability_status
             const newGuideQuery = `UPDATE tour_guides SET availability_status = 'unavailable' WHERE id = ?`;
             await connection.query(newGuideQuery, [guide_id]);
         } else if (!previous_guide_id && guide_id) {
@@ -152,6 +153,7 @@ const UpdateTour = async (
         connection.release();
     }
 };
+
 
 const GetBookingsByTourId = (tourId) => {
     const query = `

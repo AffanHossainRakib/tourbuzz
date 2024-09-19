@@ -141,14 +141,26 @@ app.post('/UpdateTour', async (req, res) => {
         previous_guide_id
     } = req.body;
 
+    // Input validation - Ensure required fields are present
+    if (!id || !title || !description || !price || !available_seats || !start_date || !end_date || !guide_id || !status) {
+        return res.status(400).json({ success: false, message: 'Missing required fields.' });
+    }
+
     try {
+        // Call the UpdateTour function to update the tour in the database
         await UpdateTour(id, title, description, price, available_seats, start_date, end_date, image_url, guide_id, featured, status, previous_guide_id);
+
+        // Send a success response
         res.status(200).json({ success: true, message: 'Tour updated successfully.' });
     } catch (err) {
+        // Log the error for debugging
         console.error('UpdateTour Error:', err);
-        res.status(500).json({ success: false, message: 'Error updating tour.' });
+
+        // Send a failure response with a detailed message
+        res.status(500).json({ success: false, message: 'Error updating tour. Please try again later.' });
     }
 });
+
 
 
 // API Route to get all tours
