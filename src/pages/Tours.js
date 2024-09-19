@@ -1,4 +1,3 @@
-// src/pages/Tours.js
 import React, { useState, useEffect } from 'react';
 import Filters from '../components/Filters';
 import Navbar from '../components/Navbar';
@@ -7,9 +6,11 @@ import axios from 'axios'; // To fetch tours data
 
 const Tours = () => {
     const [filters, setFilters] = useState({
+        search: '',     // Add search for title
         location: '',
         maxPrice: '',
-        seats: ''
+        seats: '',
+        status: ''      // Add status filter
     });
     const [tours, setTours] = useState([]); // Store the fetched tours data
     const [isOverlayOpen, setIsOverlayOpen] = useState(false);
@@ -40,6 +41,17 @@ const Tours = () => {
         setIsOverlayOpen(isOpen);
     };
 
+    // Filtering logic
+    const filteredTours = tours.filter((tour) => {
+        const matchesTitle = filters.search === '' || tour.title.toLowerCase().includes(filters.search.toLowerCase()); // Title search filter
+        const matchesLocation = filters.location === '' || tour.location.toLowerCase() === filters.location.toLowerCase(); // Location filter
+        const matchesMaxPrice = filters.maxPrice === '' || tour.price <= Number(filters.maxPrice); // Max price filter
+        const matchesSeats = filters.seats === '' || tour.available_seats >= Number(filters.seats); // Seats filter
+        const matchesStatus = filters.status === '' || tour.status === filters.status; // Status filter ('available' or 'booked')
+
+        return matchesTitle && matchesLocation && matchesMaxPrice && matchesSeats && matchesStatus;
+    });
+
     return (
         <div 
             className="relative min-h-screen bg-cover bg-center"
@@ -59,8 +71,8 @@ const Tours = () => {
                 {/* Tours Section */}
                 <div className="flex-grow">
                     <h2 className="text-3xl mb-4">All Tours</h2>
-                    {/* Pass fetched tours to TourDetailsCard */}
-                    <TourDetailsCard tours={tours} onOverlayOpenChange={handleOverlayOpenChange} />
+                    {/* Pass filtered tours to TourDetailsCard */}
+                    <TourDetailsCard tours={filteredTours} onOverlayOpenChange={handleOverlayOpenChange} />
                 </div>
             </div>
         </div>
