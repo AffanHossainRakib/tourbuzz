@@ -70,6 +70,7 @@ const ViewUsers = () => {
                             <div>
                                 <h3 className="text-xl font-semibold text-gray-800">{user.name}</h3>
                                 <p className="text-gray-600">{user.email}</p>
+                                <p className='user_type'>{user.user_type}</p>
                             </div>
                             <button
                                 className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full transition-colors"
