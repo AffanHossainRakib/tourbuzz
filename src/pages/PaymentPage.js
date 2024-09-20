@@ -7,6 +7,14 @@ const getImageUrl = (imageUrl) => {
     return `${process.env.PUBLIC_URL}/assets/tours/${imageUrl}`;
 };
 
+const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+};
+
 const PaymentPage = () => {
     const location = useLocation();
     const { tourId } = location.state || {};
@@ -46,6 +54,10 @@ const PaymentPage = () => {
         const seats = parseInt(seatsToBook, 10);
         if (isNaN(seats) || seats <= 0) {
             alert('Please enter a valid number of seats.');
+            return false;
+        }
+        if (tour.available_seats == 0) {
+            alert(`This tour is fully booked.`);
             return false;
         }
         if (seats > tour.available_seats) {
@@ -128,7 +140,7 @@ const PaymentPage = () => {
 
             setTimeout(() => {
                 setShowConfetti(false);
-                navigate('/');
+                navigate('/dashboard');
             }, 3000);
         }, 1000);
     };
@@ -166,7 +178,7 @@ const PaymentPage = () => {
                     <img src={getImageUrl(tour.image_url)} alt={tour.title} className="w-full h-64 object-cover rounded-xl mb-6 shadow-lg" />
                     <h2 className="text-3xl font-bold mb-4">{tour.title}</h2>
                     <p className="mb-2 text-lg"><strong>Price:</strong> ${tour.price}</p>
-                    <p className="mb-2 text-lg"><strong>Start Date:</strong> {tour.start_date}</p>
+                    <p className="mb-2 text-lg"><strong>Start Date:</strong> {formatDate(tour.start_date)}</p>
                     <p className="mb-2 text-lg"><strong>Seats Available:</strong> {tour.available_seats}</p>
                     <div className="mb-6">
                         <label className="block mb-1 text-white">Number of Seats to Book</label>
