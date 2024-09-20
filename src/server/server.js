@@ -30,6 +30,7 @@ const {
     UpdateUserProfile,
     GetTourById,
     UpdateTourSeats,
+    GetBookingsByUserId,
 } = require('./dbQueries');
 
 const app = express();
@@ -536,6 +537,18 @@ app.post('/CompletePayment', async (req, res) => {
         connection.release();
     }
 });
+
+app.get('/GetBookingsByUserId/:user_id', async (req, res) => {
+    const { user_id } = req.params;
+    try {
+        const result = await GetBookingsByUserId(user_id);
+        res.status(200).json(result);
+    } catch (err) {
+        console.error('GetBookingsByUserId Error:', err);
+        res.status(500).json({ success: false, message: 'Error fetching bookings by user ID.' });
+    }
+});
+
 
 
 

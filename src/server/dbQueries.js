@@ -410,6 +410,17 @@ const CreatePayment = async (booking_id, amount, payment_status, connection) => 
     }
 };
 
+const GetBookingsByUserId = (user_id) => {
+    const query = `
+        SELECT tb.*, t.title, t.image_url, t.start_date 
+        FROM tour_bookings tb
+        JOIN tours t ON tb.tour_id = t.id
+        WHERE tb.user_id = ?
+    `;
+    return executeQuery(query, [user_id]);
+};
+
+
 
 // Exporting functions
 
@@ -436,5 +447,6 @@ module.exports = {
     GetBookingsByTourId,
     UpdateUserProfile,
     GetTourById,
-    UpdateTourSeats
+    UpdateTourSeats,
+    GetBookingsByUserId
 };
