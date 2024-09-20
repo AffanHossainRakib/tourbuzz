@@ -62,7 +62,7 @@ const EditTours = () => {
         const date = new Date(dateString);
         return new Intl.DateTimeFormat('en-CA').format(date); // Format as YYYY-MM-DD
     };
-      
+
     const handleEditTour = (tour) => {
         setSelectedTour({
             ...tour,
@@ -94,13 +94,13 @@ const EditTours = () => {
 
     const handleSelectGuide = async (guideId) => {
         const previousGuideId = selectedTour.guide_id;
-    
+
         // Set the new guide in the selected tour
         setSelectedTour((prev) => ({ ...prev, guide_id: guideId }));
-    
+
         // Fetch and set the selected guide's details
         fetchTourGuideById(guideId);
-    
+
         if (previousGuideId !== guideId) {
             try {
                 // Make the previous guide available, if there was a previous guide
@@ -153,8 +153,8 @@ const EditTours = () => {
     );
 
     return (
-        <div>
-            <h2 className="text-2xl text-white font-bold mb-4">Edit Tours</h2>
+        <div className="p-4">
+            <h2 className="text-3xl text-white font-bold mb-4">Edit Tours</h2>
 
             <input
                 type="text"
@@ -164,11 +164,12 @@ const EditTours = () => {
                 className="w-full mb-4 px-3 py-2 border rounded-lg focus:outline-none"
             />
 
-            <ul className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredTours.map((tour) => (
-                    <li key={tour.id} className="flex justify-between items-center bg-gray-200 p-4 rounded-lg">
-                        <span>{tour.title}</span>
-                        <div className="flex space-x-4">
+                    <div key={tour.id} className="bg-white rounded-lg shadow-md p-4">
+                        <h3 className="font-semibold text-lg mb-2">{tour.title}</h3>
+                        <p className="text-sm text-gray-600 mb-4">{tour.description}</p>
+                        <div className="flex justify-between items-center mt-auto">
                             <button
                                 onClick={() => handleEditTour(tour)}
                                 className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
@@ -182,75 +183,79 @@ const EditTours = () => {
                                 Delete
                             </button>
                         </div>
-                    </li>
+                    </div>
                 ))}
-            </ul>
+            </div>
 
             {showEditOverlay && selectedTour && (
                 <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50" onClick={() => setShowEditOverlay(false)}>
-                    <div className="bg-white p-8 rounded-lg shadow-lg w-2/3 max-h-screen overflow-y-auto relative" onClick={(e) => e.stopPropagation()}>
+                    <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl max-h-screen overflow-y-auto relative" onClick={(e) => e.stopPropagation()}>
                         <h3 className="text-xl font-bold mb-4">Edit Tour: {selectedTour.title}</h3>
 
-                        <label className="block mb-2">Title:</label>
-                        <input
-                            type="text"
-                            value={selectedTour.title}
-                            onChange={(e) => setSelectedTour({ ...selectedTour, title: e.target.value })}
-                            className="w-full mb-4 px-3 py-2 border rounded-lg focus:outline-none"
-                        />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label className="block mb-2">Title:</label>
+                                <input
+                                    type="text"
+                                    value={selectedTour.title}
+                                    onChange={(e) => setSelectedTour({ ...selectedTour, title: e.target.value })}
+                                    className="w-full mb-4 px-3 py-2 border rounded-lg focus:outline-none"
+                                />
+                            </div>
 
-                        <label className="block mb-2">Description:</label>
-                        <textarea
-                            value={selectedTour.description}
-                            onChange={(e) => setSelectedTour({ ...selectedTour, description: e.target.value })}
-                            className="w-full mb-4 px-3 py-2 border rounded-lg focus:outline-none"
-                        />
+                            <div>
+                                <label className="block mb-2">Location:</label>
+                                <input
+                                    type="text"
+                                    value={selectedTour.location}
+                                    onChange={(e) => setSelectedTour({ ...selectedTour, location: e.target.value })}
+                                    className="w-full mb-4 px-3 py-2 border rounded-lg focus:outline-none"
+                                />
+                            </div>
 
-                        <label className="block mb-2">Location:</label>
-                        <input
-                            type="text"
-                            value={selectedTour.location}  // Populate with existing location
-                            onChange={(e) => setSelectedTour({ ...selectedTour, location: e.target.value })}  // Allow location to be edited
-                            className="w-full mb-4 px-3 py-2 border rounded-lg focus:outline-none"
-                        />
+                            <div>
+                                <label className="block mb-2">Price:</label>
+                                <input
+                                    type="number"
+                                    value={selectedTour.price}
+                                    onChange={(e) => setSelectedTour({ ...selectedTour, price: e.target.value })}
+                                    className="w-full mb-4 px-3 py-2 border rounded-lg focus:outline-none"
+                                />
+                            </div>
 
-                        <label className="block mb-2">Price:</label>
-                        <input
-                            type="number"
-                            value={selectedTour.price}
-                            onChange={(e) => setSelectedTour({ ...selectedTour, price: e.target.value })}
-                            className="w-full mb-4 px-3 py-2 border rounded-lg focus:outline-none"
-                        />
+                            <div>
+                                <label className="block mb-2">Available Seats:</label>
+                                <input
+                                    type="number"
+                                    value={selectedTour.available_seats}
+                                    onChange={(e) => setSelectedTour({ ...selectedTour, available_seats: e.target.value })}
+                                    className="w-full mb-4 px-3 py-2 border rounded-lg focus:outline-none"
+                                />
+                            </div>
 
-                        <label className="block mb-2">Available Seats:</label>
-                        <input
-                            type="number"
-                            value={selectedTour.available_seats}
-                            onChange={(e) => setSelectedTour({ ...selectedTour, available_seats: e.target.value })}
-                            className="w-full mb-4 px-3 py-2 border rounded-lg focus:outline-none"
-                        />
+                            <div>
+                                <label className="block mb-2">Start Date:</label>
+                                <input
+                                    type="date"
+                                    value={selectedTour.start_date}
+                                    onChange={(e) => setSelectedTour({ ...selectedTour, start_date: e.target.value })}
+                                    className="w-full mb-4 px-3 py-2 border rounded-lg focus:outline-none"
+                                />
+                            </div>
 
-                        <label className="block mb-2">Start Date:</label>
-                        <input
-                            type="date"
-                            value={selectedTour.start_date}
-                            onChange={(e) => setSelectedTour({ ...selectedTour, start_date: e.target.value })}
-                            className="w-full mb-4 px-3 py-2 border rounded-lg focus:outline-none"
-                        />
-
-                        <label className="block mb-2">End Date:</label>
-                        <input
-                            type="date"
-                            value={selectedTour.end_date}
-                            onChange={(e) => setSelectedTour({ ...selectedTour, end_date: e.target.value })}
-                            className="w-full mb-4 px-3 py-2 border rounded-lg focus:outline-none"
-                        />
+                            <div>
+                                <label className="block mb-2">End Date:</label>
+                                <input
+                                    type="date"
+                                    value={selectedTour.end_date}
+                                    onChange={(e) => setSelectedTour({ ...selectedTour, end_date: e.target.value })}
+                                    className="w-full mb-4 px-3 py-2 border rounded-lg focus:outline-none"
+                                />
+                            </div>
+                        </div>
 
                         <label className="block mb-2">Tour Guide:</label>
-                        <GuideSearch
-                            guides={tourGuides}
-                            onSelect={handleSelectGuide}
-                        />
+                        <GuideSearch guides={tourGuides} onSelect={handleSelectGuide} />
                         {selectedGuide && (
                             <div className="mt-4">
                                 <p>Selected Guide: {selectedGuide.name}</p>

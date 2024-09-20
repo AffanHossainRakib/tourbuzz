@@ -107,87 +107,87 @@ const CreateTour = () => {
     };
 
     return (
-        <div className="relative min-h-screen bg-cover bg-center bg-fixed p-8">
-            <h2 className="text-2xl font-bold text-white mb-6">Create Tour</h2>
+        <div className="relative min-h-screen bg-gradient-to-r from-blue-900 via-gray-800 to-black p-8">
+            <h2 className="text-3xl font-bold text-white mb-6">Create a New Tour</h2>
             <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleCreateTour}>
                 <div>
-                    <label className="block text-white mb-1">Title</label>
+                    <label className="block text-gray-200 mb-1">Title</label>
                     <input
                         type="text"
                         name="title"
                         value={newTour.title}
                         onChange={handleNewTourChange}
-                        className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none"
+                        className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
                         required
                     />
                 </div>
                 <div>
-                    <label className="block text-white mb-1">Description</label>
+                    <label className="block text-gray-200 mb-1">Description</label>
                     <textarea
                         name="description"
                         value={newTour.description}
                         onChange={handleNewTourChange}
-                        className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none"
+                        className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
                         required
                     ></textarea>
                 </div>
                 <div>
-                    <label className="block text-white mb-1">Location</label>
+                    <label className="block text-gray-200 mb-1">Location</label>
                     <input
                         type="text"
                         name="location"
                         value={newTour.location}
                         onChange={handleNewTourChange}
-                        className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none"
+                        className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
                         required
                     />
                 </div>
                 <div>
-                    <label className="block text-white mb-1">Price</label>
+                    <label className="block text-gray-200 mb-1">Price</label>
                     <input
                         type="number"
                         name="price"
                         value={newTour.price}
                         onChange={handleNewTourChange}
-                        className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none"
+                        className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
                         required
                     />
                 </div>
                 <div>
-                    <label className="block text-white mb-1">Available Seats</label>
+                    <label className="block text-gray-200 mb-1">Available Seats</label>
                     <input
                         type="number"
                         name="available_seats"
                         value={newTour.available_seats}
                         onChange={handleNewTourChange}
-                        className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none"
+                        className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
                         required
                     />
                 </div>
                 <div>
-                    <label className="block text-white mb-1">Start Date</label>
+                    <label className="block text-gray-200 mb-1">Start Date</label>
                     <input
                         type="date"
                         name="start_date"
                         value={newTour.start_date.split('T')[0]}
                         onChange={handleNewTourChange}
-                        className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none"
+                        className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
                         required
                     />
                 </div>
                 <div>
-                    <label className="block text-white mb-1">End Date</label>
+                    <label className="block text-gray-200 mb-1">End Date</label>
                     <input
                         type="date"
                         name="end_date"
                         value={newTour.end_date.split('T')[0]}
                         onChange={handleNewTourChange}
-                        className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none"
+                        className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
                         required
                     />
                 </div>
                 <div className="md:col-span-2">
-                    <label className="block text-white mb-1">Assign Tour Guide</label>
+                    <label className="block text-gray-200 mb-1">Assign Tour Guide</label>
                     <GuideSearch
                         guides={tourGuides}
                         onSelect={handleSelectGuide}
@@ -196,19 +196,19 @@ const CreateTour = () => {
                     />
                 </div>
                 <div className="md:col-span-2">
-                    <label className="block text-white mb-1">Select Media</label>
-                    <button type="button" onClick={openMediaOverlay} className="bg-blue-600 text-white px-4 py-2 rounded-full">
+                    <label className="block text-gray-200 mb-1">Select Media</label>
+                    <button type="button" onClick={openMediaOverlay} className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700">
                         Select Media
                     </button>
-                    {selectedMedia && <p className="text-white mt-2">Selected Media: {selectedMedia}</p>}
+                    {selectedMedia && <p className="text-gray-200 mt-2">Selected Media: {selectedMedia}</p>}
                 </div>
                 <div>
-                    <label className="block text-white mb-1">Status</label>
+                    <label className="block text-gray-200 mb-1">Status</label>
                     <select
                         name="status"
                         value={newTour.status}
                         onChange={handleNewTourChange}
-                        className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none"
+                        className="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
                         required
                     >
                         <option value="available">Available</option>
@@ -221,14 +221,14 @@ const CreateTour = () => {
                         name="featured"
                         checked={newTour.featured}
                         onChange={(e) => setNewTour(prev => ({ ...prev, featured: e.target.checked }))}
-                        className="mr-2"
+                        className="mr-2 focus:ring-2 focus:ring-blue-600"
                     />
-                    <label className="text-white">Set as Featured</label>
+                    <label className="text-gray-200">Set as Featured</label>
                 </div>
                 <div className="md:col-span-2">
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 text-white px-4 py-2 rounded-full transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg"
+                        className="w-full bg-blue-600 text-white px-4 py-2 rounded-full transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg hover:bg-blue-700"
                     >
                         Create Tour
                     </button>

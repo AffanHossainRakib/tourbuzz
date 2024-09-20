@@ -5,9 +5,9 @@ const CreateTourGuide = () => {
     const [newGuide, setNewGuide] = useState({
         name: '',
         email: '',
-        phone_number: '',  // Updated to match backend naming
-        experience_years: 0,  // Updated to match backend naming
-        availability_status: 'Available'  // Ensure this matches the backend
+        phone_number: '',
+        experience_years: 0,
+        availability_status: 'Available'
     });
 
     const serverBaseUrl = process.env.REACT_APP_SERVER_BASE_URL || 'http://localhost:5001';
@@ -38,8 +38,9 @@ const CreateTourGuide = () => {
     };
 
     return (
-        <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-3xl font-semibold text-center text-gray-800 mb-6">Create Tour Guide</h2>
+        <div className="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-lg mt-10">
+            <h2 className="text-3xl font-semibold text-center text-gray-900 mb-8">Create Tour Guide</h2>
+            
             <form className="space-y-6" onSubmit={handleCreateGuide}>
                 <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
@@ -48,9 +49,9 @@ const CreateTourGuide = () => {
                         name="name" 
                         value={newGuide.name} 
                         onChange={handleNewGuideChange} 
-                        placeholder="Name" 
+                        placeholder="Guide Name" 
                         required 
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all"
                     />
                 </div>
 
@@ -61,9 +62,9 @@ const CreateTourGuide = () => {
                         name="email" 
                         value={newGuide.email} 
                         onChange={handleNewGuideChange} 
-                        placeholder="Email" 
+                        placeholder="Guide Email" 
                         required 
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all"
                     />
                 </div>
 
@@ -74,8 +75,8 @@ const CreateTourGuide = () => {
                         name="phone_number" 
                         value={newGuide.phone_number} 
                         onChange={handleNewGuideChange} 
-                        placeholder="Phone Number" 
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        placeholder="Guide Phone Number" 
+                        className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all"
                     />
                 </div>
 
@@ -87,7 +88,7 @@ const CreateTourGuide = () => {
                         value={newGuide.experience_years} 
                         onChange={handleNewGuideChange} 
                         placeholder="Years of Experience" 
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all"
                     />
                 </div>
 
@@ -97,17 +98,17 @@ const CreateTourGuide = () => {
                         name="availability_status" 
                         value={newGuide.availability_status} 
                         onChange={handleNewGuideChange} 
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        className="mt-2 block w-full px-4 py-2 border border-gray-300 bg-white rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all"
                     >
                         <option value="Available">Available</option>
                         <option value="Unavailable">Unavailable</option>
                     </select>
                 </div>
 
-                <div className="flex justify-center">
+                <div className="flex justify-center mt-6">
                     <button 
                         type="submit" 
-                        className="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-700 transition-colors"
+                        className="bg-indigo-600 text-white px-6 py-2 rounded-lg shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition-all"
                     >
                         Create Guide
                     </button>
