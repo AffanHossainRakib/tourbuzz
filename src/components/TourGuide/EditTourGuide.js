@@ -10,7 +10,7 @@ const EditTourGuide = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const serverBaseUrl = process.env.REACT_APP_SERVER_BASE_URL || 'http://localhost:5001';
 
-    const formRef = useRef(null); // Ref to track the form
+    const formRef = useRef(null);
 
     useEffect(() => {
         fetchTourGuides();
@@ -41,8 +41,8 @@ const EditTourGuide = () => {
             await axios.post(`${serverBaseUrl}/UpdateTourGuide`, selectedGuide);
             setSuccessMessage('Tour guide updated successfully.');
             setErrorMessage('');
-            fetchTourGuides();  // Refresh the list after update
-            setSelectedGuide(null); // Close the form after saving
+            fetchTourGuides();
+            setSelectedGuide(null);
         } catch (error) {
             console.error('Error saving guide:', error);
             setErrorMessage('Error saving guide.');
@@ -57,8 +57,8 @@ const EditTourGuide = () => {
 
         try {
             const response = await axios.post(`${serverBaseUrl}/DeleteTourGuide`, { id: guideId });
-            alert(response.data.message);  // Show success message
-            fetchTourGuides();  // Refresh the list of guides after deletion
+            alert(response.data.message);
+            fetchTourGuides();
         } catch (error) {
             console.error('Error deleting guide:', error);
             alert('Error deleting tour guide.');
@@ -69,18 +69,15 @@ const EditTourGuide = () => {
         setSearchTerm(e.target.value);
     };
 
-    // Close the edit panel when clicking outside of it
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (formRef.current && !formRef.current.contains(event.target)) {
-                setSelectedGuide(null); // Close the edit panel if click outside the form
+                setSelectedGuide(null);
             }
         };
 
-        // Add event listener
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
-            // Cleanup event listener
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [formRef]);
@@ -90,7 +87,7 @@ const EditTourGuide = () => {
     );
 
     return (
-        <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
             <h2 className="text-3xl font-semibold text-center text-gray-800 mb-6">Edit Tour Guide</h2>
 
             {loading && <p className="text-center text-blue-600">Loading...</p>}
@@ -105,22 +102,22 @@ const EditTourGuide = () => {
                     placeholder="Search for a guide..."
                     value={searchTerm}
                     onChange={handleSearch}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition ease-in-out"
                 />
             </div>
 
             {/* Scrollable container for tour guides */}
-            <div className="max-h-64 overflow-y-auto border border-gray-300 rounded-lg p-4">
-                <h3 className="text-xl font-semibold mb-4">Tour Guides</h3>
+            <div className="max-h-64 overflow-y-auto border border-gray-300 rounded-lg p-4 shadow-sm">
+                <h3 className="text-xl font-semibold mb-4 text-gray-700">Tour Guides</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {filteredGuides.length > 0 ? (
                         filteredGuides.map(guide => (
                             <div
                                 key={guide.id}
-                                className={`p-4 border rounded-lg cursor-pointer hover:bg-gray-100 ${
+                                className={`p-4 border rounded-lg cursor-pointer transition-transform transform hover:scale-105 hover:bg-gray-100 ${
                                     selectedGuide && selectedGuide.id === guide.id ? 'bg-gray-200' : ''
                                 }`}
-                                onClick={() => setSelectedGuide(guide)} // Click to open edit panel
+                                onClick={() => setSelectedGuide(guide)}
                             >
                                 <p className="font-medium">{guide.name}</p>
                                 <p className="text-sm text-gray-600">{guide.email}</p>
@@ -129,16 +126,16 @@ const EditTourGuide = () => {
                                 <div className="flex justify-between mt-2">
                                     <button
                                         onClick={(e) => {
-                                            e.stopPropagation(); // Prevent closing panel when deleting
+                                            e.stopPropagation();
                                             handleDeleteGuide(guide.id);
                                         }}
-                                        className="text-red-600 hover:text-red-800"
+                                        className="text-red-600 hover:text-red-800 transition"
                                     >
                                         Delete
                                     </button>
                                     <button
                                         onClick={() => setSelectedGuide(guide)}
-                                        className="text-indigo-600 hover:text-indigo-800"
+                                        className="text-indigo-600 hover:text-indigo-800 transition"
                                     >
                                         Edit
                                     </button>
@@ -152,7 +149,7 @@ const EditTourGuide = () => {
             </div>
 
             {selectedGuide && (
-                <form ref={formRef} className="space-y-4 mt-6" onSubmit={handleEditGuideSave}>
+                <form ref={formRef} className="space-y-4 mt-6 bg-gray-50 p-6 rounded-lg shadow-md" onSubmit={handleEditGuideSave}>
                     <div>
                         <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
                         <input

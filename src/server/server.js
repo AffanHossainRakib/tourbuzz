@@ -31,6 +31,7 @@ const {
     GetTourById,
     UpdateTourSeats,
     GetBookingsByUserId,
+    GetTransactions,
 } = require('./dbQueries');
 
 const app = express();
@@ -550,7 +551,15 @@ app.get('/GetBookingsByUserId/:user_id', async (req, res) => {
 });
 
 
-
+app.get('/GetTransactions', async (req, res) => {
+    try {
+        const transactions = await GetTransactions();
+        res.status(200).json(transactions);
+    } catch (error) {
+        console.error('Error fetching transactions:', error);
+        res.status(500).json({ success: false, message: 'Error fetching transactions' });
+    }
+});
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);

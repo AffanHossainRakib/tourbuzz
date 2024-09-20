@@ -420,6 +420,30 @@ const GetBookingsByUserId = (user_id) => {
     return executeQuery(query, [user_id]);
 };
 
+const GetTransactions = async () => {
+    const query = `
+        SELECT 
+            payments.id,
+            users.name AS user_name,
+            users.email,
+            payments.amount,
+            payments.payment_status,
+            tours.title AS tour_title
+        FROM payments
+        JOIN tour_bookings ON payments.booking_id = tour_bookings.id
+        JOIN users ON tour_bookings.user_id = users.id
+        JOIN tours ON tour_bookings.tour_id = tours.id
+        WHERE payments.payment_status = 'completed'
+    `;
+
+    try {
+        const [transactions] = await promisePool.query(query);
+        return transactions;
+    } catch (error) {
+        console.error('Error fetching transactions:', error);
+        throw error;
+    }
+};
 
 
 // Exporting functions
@@ -448,5 +472,6 @@ module.exports = {
     UpdateUserProfile,
     GetTourById,
     UpdateTourSeats,
-    GetBookingsByUserId
+    GetBookingsByUserId,
+    GetTransactions
 };

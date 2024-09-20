@@ -154,7 +154,7 @@ const EditTours = () => {
 
     return (
         <div>
-            <h2 className="text-2xl font-bold mb-4">Edit Tours</h2>
+            <h2 className="text-2xl text-white font-bold mb-4">Edit Tours</h2>
 
             <input
                 type="text"

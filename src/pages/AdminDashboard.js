@@ -6,7 +6,8 @@ import EditTourGuide from '../components/TourGuide/EditTourGuide';
 import ViewUsers from '../components/Users/ViewUsers';
 import ManageMedia from '../components/Media/ManageMedia';
 import ViewBookings from '../components/Bookings/ViewBookings';
-import { FaSuitcase, FaEdit, FaUserTie, FaUsers, FaCamera, FaSignOutAlt } from 'react-icons/fa';
+import ViewTransactions from '../components/Transactions/ViewTransactions';  
+import { FaSuitcase, FaEdit, FaUserTie, FaUserEdit, FaUsers, FaCamera, FaMoneyCheck, FaSignOutAlt, FaBook } from 'react-icons/fa'; 
 import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
@@ -31,43 +32,92 @@ const AdminDashboard = () => {
             <div className="absolute inset-0 bg-black bg-opacity-50"></div>
 
             <div className="relative z-10 flex p-8">
-                <div className="w-64 bg-gray-800 bg-opacity-80 backdrop-blur-md text-white p-4 rounded-lg h-fit flex-shrink-0">
-                    <ul className="space-y-4">
-                        <li className={`cursor-pointer ${activeTab === 'createTour' && 'bg-gray-700'}`} onClick={() => handleTabChange('createTour')}>
+                {/* Sidebar */}
+                <div className="w-64 bg-gray-900 bg-opacity-90 backdrop-blur-md text-white p-6 rounded-lg h-fit flex-shrink-0">
+                    <ul className="space-y-6">
+                        <li
+                            className={`cursor-pointer flex items-center space-x-3 p-3 rounded-md transition ${
+                                activeTab === 'createTour' ? 'bg-indigo-600 font-semibold shadow-lg' : 'hover:bg-gray-700'
+                            }`}
+                            onClick={() => handleTabChange('createTour')}
+                        >
                             <FaSuitcase />
                             <span>Create Tour</span>
                         </li>
-                        <li className={`cursor-pointer ${activeTab === 'editTour' && 'bg-gray-700'}`} onClick={() => handleTabChange('editTour')}>
+                        <li
+                            className={`cursor-pointer flex items-center space-x-3 p-3 rounded-md transition ${
+                                activeTab === 'editTour' ? 'bg-indigo-600 font-semibold shadow-lg' : 'hover:bg-gray-700'
+                            }`}
+                            onClick={() => handleTabChange('editTour')}
+                        >
                             <FaEdit />
                             <span>Edit Tour</span>
                         </li>
-                        <li className={`cursor-pointer ${activeTab === 'createGuide' && 'bg-gray-700'}`} onClick={() => handleTabChange('createGuide')}>
+                        <li
+                            className={`cursor-pointer flex items-center space-x-3 p-3 rounded-md transition ${
+                                activeTab === 'createGuide' ? 'bg-indigo-600 font-semibold shadow-lg' : 'hover:bg-gray-700'
+                            }`}
+                            onClick={() => handleTabChange('createGuide')}
+                        >
                             <FaUserTie />
                             <span>Create Tour Guide</span>
                         </li>
-                        <li className={`cursor-pointer ${activeTab === 'editGuide' && 'bg-gray-700'}`} onClick={() => handleTabChange('editGuide')}>
-                            <FaUsers />
+                        <li
+                            className={`cursor-pointer flex items-center space-x-3 p-3 rounded-md transition ${
+                                activeTab === 'editGuide' ? 'bg-indigo-600 font-semibold shadow-lg' : 'hover:bg-gray-700'
+                            }`}
+                            onClick={() => handleTabChange('editGuide')}
+                        >
+                            <FaUserEdit />
                             <span>Edit Tour Guide</span>
                         </li>
-                        <li className={`cursor-pointer ${activeTab === 'viewBooking' && 'bg-gray-700'}`} onClick={() => handleTabChange('viewBooking')}>
-                            <FaUsers />
+                        <li
+                            className={`cursor-pointer flex items-center space-x-3 p-3 rounded-md transition ${
+                                activeTab === 'viewBooking' ? 'bg-indigo-600 font-semibold shadow-lg' : 'hover:bg-gray-700'
+                            }`}
+                            onClick={() => handleTabChange('viewBooking')}
+                        >
+                            <FaBook />
                             <span>View Bookings</span>
                         </li>
-                        <li className={`cursor-pointer ${activeTab === 'viewUsers' && 'bg-gray-700'}`} onClick={() => handleTabChange('viewUsers')}>
+                        <li
+                            className={`cursor-pointer flex items-center space-x-3 p-3 rounded-md transition ${
+                                activeTab === 'viewUsers' ? 'bg-indigo-600 font-semibold shadow-lg' : 'hover:bg-gray-700'
+                            }`}
+                            onClick={() => handleTabChange('viewUsers')}
+                        >
                             <FaUsers />
                             <span>View Users</span>
                         </li>
-                        <li className={`cursor-pointer ${activeTab === 'manageMedia' && 'bg-gray-700'}`} onClick={() => handleTabChange('manageMedia')}>
+                        <li
+                            className={`cursor-pointer flex items-center space-x-3 p-3 rounded-md transition ${
+                                activeTab === 'manageMedia' ? 'bg-indigo-600 font-semibold shadow-lg' : 'hover:bg-gray-700'
+                            }`}
+                            onClick={() => handleTabChange('manageMedia')}
+                        >
                             <FaCamera />
                             <span>Manage Media</span>
                         </li>
-                        <li className="cursor-pointer" onClick={handleLogout}>
+                        <li
+                            className={`cursor-pointer flex items-center space-x-3 p-3 rounded-md transition ${
+                                activeTab === 'transactions' ? 'bg-indigo-600 font-semibold shadow-lg' : 'hover:bg-gray-700'
+                            }`}
+                            onClick={() => handleTabChange('transactions')}
+                        >
+                            <FaMoneyCheck />
+                            <span>Transactions</span>  
+                        </li>
+                        <li
+                            className="cursor-pointer flex items-center space-x-3 p-3 rounded-md bg-red-600 hover:bg-red-700 transition"
+                            onClick={handleLogout}
+                        >
                             <FaSignOutAlt />
                             <span>Logout</span>
                         </li>
                     </ul>
                 </div>
 
+                {/* Main Content */}
                 <div className="flex-grow ml-6">
                     {activeTab === 'createTour' && <CreateTour />}
                     {activeTab === 'editTour' && <EditTour />}
@@ -76,6 +126,7 @@ const AdminDashboard = () => {
                     {activeTab === 'viewUsers' && <ViewUsers />}
                     {activeTab === 'manageMedia' && <ManageMedia />}
                     {activeTab === 'viewBooking' && <ViewBookings />}
+                    {activeTab === 'transactions' && <ViewTransactions />}  
                 </div>
             </div>
         </div>
