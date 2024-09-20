@@ -26,7 +26,6 @@ const CreateUser = async (name, email, password, user_type = 'user') => {
     }
 };
 
-// dbQueries.js
 
 const UpdateUserProfile = async (email, updatedFields) => {
     const fields = [];
@@ -129,7 +128,7 @@ const UpdateTour = async (
     id,
     title,
     description,
-    location,  // Add location to the parameters
+    location,
     price,
     available_seats,
     start_date,
@@ -226,7 +225,6 @@ const GetTours = async () => {
     }
 };
 
-// dbQueries.js
 
 const DeleteTour = async (id) => {
     const connection = await promisePool.getConnection();
@@ -250,7 +248,6 @@ const DeleteTour = async (id) => {
 
 
 
-// dbQueries.js
 
 const GetTourById = async (id) => {
     const query = `SELECT * FROM tours WHERE id = ?`;
@@ -321,13 +318,6 @@ const GetTourGuideById = async (id) => {
 };
 
 
-// Tour Bookings CRUD Operations
-
-
-// Payments CRUD Operations
-
-
-// Admin Tour Creation Log
 
 const LogAdminTourCreation = (admin_id, tour_id) => {
     const query = `INSERT INTO admin_tour_creations (admin_id, tour_id) VALUES (?, ?)`;
@@ -446,7 +436,6 @@ const GetTransactions = async () => {
 };
 
 
-// Exporting functions
 
 module.exports = {
     CreateUser,

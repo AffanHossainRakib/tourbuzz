@@ -62,10 +62,6 @@ app.get('/GetUsers', async (req, res) => {
     }
 });
 
-// server.js
-
-// Update the route to fetch user profile by email
-// server.js
 
 // Route to fetch user profile by email
 app.get('/GetUserProfile/:email', async (req, res) => {
@@ -97,9 +93,7 @@ app.get('/GetUserById/:id', async (req, res) => {
 });
 
 
-// server.js
 
-// Route to update user profile (email and password)
 app.post('/UpdateUserProfile', async (req, res) => {
     const { email, newEmail, newPassword } = req.body;
     
@@ -186,7 +180,7 @@ app.post('/UpdateTour', async (req, res) => {
         id,
         title,
         description,
-        location, // Include location in the request body
+        location,
         price,
         available_seats,
         start_date,
