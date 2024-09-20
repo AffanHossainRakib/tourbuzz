@@ -1,4 +1,3 @@
-// src/components/TourDetailsCard.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -31,7 +30,9 @@ const TourDetailsCard = ({ tours, onOverlayOpenChange }) => {
     };
 
     const handleBookNow = () => {
-        navigate('/payment', { state: { tour: selectedTour } });
+        if (selectedTour) {
+            navigate('/payment', { state: { tourId: selectedTour.id } });
+        }
     };
 
     return (
@@ -54,7 +55,6 @@ const TourDetailsCard = ({ tours, onOverlayOpenChange }) => {
                             <p className="mb-2">Price: ${tour.price}</p>
                             <p className="mb-2">Seats Available: {tour.available_seats}</p>
                             <p className="mb-2">Start Date: {formatDate(tour.start_date)}</p>
-                            {/* <p className="mb-2">End Date: {formatDate(tour.end_date)}</p> */}
                             <button 
                                 className="mt-4 w-full bg-blue-600 text-white px-4 py-2 rounded-full transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg hover:shadow-blue-500/50"
                                 onClick={() => openTourDetails(tour)}

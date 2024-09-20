@@ -19,8 +19,8 @@ const TourDetailsOverlay = ({ tour, onClose }) => {
     const navigate = useNavigate();
 
     const handleBookNow = () => {
-        // Navigate to the payment page with tour details
-        navigate('/payment', { state: { tour } });
+        // Navigate to the payment page with the tour ID
+        navigate('/payment', { state: { tourId: tour.id } });
     };
 
     return (

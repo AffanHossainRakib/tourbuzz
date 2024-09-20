@@ -5,6 +5,8 @@ const cors = require('cors');
 const bcrypt = require('bcrypt'); 
 const path = require('path');
 const fs = require('fs');
+const promisePool = require('./db');
+
 require('dotenv').config(); 
 
 const {
@@ -26,6 +28,8 @@ const {
     DeleteUser,
     GetBookingsByTourId,
     UpdateUserProfile,
+    GetTourById,
+    UpdateTourSeats,
 } = require('./dbQueries');
 
 const app = express();
@@ -212,6 +216,29 @@ app.post('/UpdateTour', async (req, res) => {
     }
 });
 
+app.post('/UpdateTourSeats', async (req, res) => {
+    const { id, available_seats, status } = req.body;
+
+    // Input validation - Ensure required fields are present
+    if (!id || available_seats === undefined || !status) {
+        return res.status(400).json({ success: false, message: 'Missing required fields.' });
+    }
+
+    try {
+        // Call the update function to update only available_seats and status in the database
+        await UpdateTourSeats(id, available_seats, status);
+
+        // Send a success response
+        res.status(200).json({ success: true, message: 'Tour seats and status updated successfully.' });
+    } catch (err) {
+        // Log the error for debugging
+        console.error('UpdateTourSeats Error:', err);
+
+        // Send a failure response with a detailed message
+        res.status(500).json({ success: false, message: 'Error updating tour seats. Please try again later.' });
+    }
+});
+
 
 
 // API Route to get all tours
@@ -307,6 +334,24 @@ app.get('/GetTourGuideById/:id', async (req, res) => {
         res.status(500).json({ success: false, message: 'Error fetching tour guide.' });
     }
 });
+
+
+// Route to get a specific tour by ID
+app.get('/GetTourById/:id', async (req, res) => {
+    const { id } = req.params;  // Extract tour ID from request parameters
+    try {
+        const tour = await GetTourById(id);  // Call the function from dbQueries.js to fetch the tour
+        if (tour.length > 0) {
+            res.status(200).json(tour[0]);  // Send the first result if the tour exists
+        } else {
+            res.status(404).json({ success: false, message: 'Tour not found' });
+        }
+    } catch (error) {
+        console.error('Error fetching tour by ID:', error);
+        res.status(500).json({ success: false, message: 'Error fetching tour' });
+    }
+});
+
 
 
 app.post('/UpdateTourGuide', async (req, res) => {
@@ -434,6 +479,65 @@ app.post('/DeleteMedia', async (req, res) => {
         res.status(500).json({ success: false, message: 'Error deleting media file.' });
     }
 });
+
+app.post('/CompletePayment', async (req, res) => {
+    const { email, tour_id, seats_booked } = req.body;
+
+    if (!email || !tour_id || !seats_booked) {
+        return res.status(400).json({ success: false, message: 'Missing required fields.' });
+    }
+
+    const connection = await promisePool.getConnection();
+    try {
+        await connection.beginTransaction();
+
+        // Step 1: Fetch user ID by email
+        const [userResult] = await connection.query('SELECT id FROM users WHERE email = ?', [email]);
+        if (userResult.length === 0) {
+            return res.status(404).json({ success: false, message: 'User not found.' });
+        }
+        const user_id = userResult[0].id;
+
+        // Step 2: Fetch tour price by tour_id
+        const [tourResult] = await connection.query('SELECT price FROM tours WHERE id = ?', [tour_id]);
+        if (tourResult.length === 0) {
+            return res.status(404).json({ success: false, message: 'Tour not found.' });
+        }
+        const tour_price = tourResult[0].price;
+
+        // Calculate the total price based on seats_booked
+        const total_price = tour_price * seats_booked;
+
+        // Step 3: Insert into tour_bookings
+        const bookingQuery = `
+            INSERT INTO tour_bookings (user_id, tour_id, seats_booked)
+            VALUES (?, ?, ?)
+        `;
+        const [bookingResult] = await connection.query(bookingQuery, [user_id, tour_id, seats_booked]);
+        const booking_id = bookingResult.insertId; // Get the inserted booking ID
+
+        // Step 4: Insert into payments table
+        const paymentQuery = `
+            INSERT INTO payments (booking_id, amount, payment_status)
+            VALUES (?, ?, 'completed')
+        `;
+        await connection.query(paymentQuery, [booking_id, total_price]);
+
+        // Commit the transaction
+        await connection.commit();
+
+        // Send success response
+        res.status(200).json({ success: true, message: 'Payment and booking completed successfully.', total_price });
+    } catch (err) {
+        await connection.rollback();
+        console.error('CompletePayment Error:', err);
+        res.status(500).json({ success: false, message: 'Error processing payment and booking.' });
+    } finally {
+        connection.release();
+    }
+});
+
+
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);

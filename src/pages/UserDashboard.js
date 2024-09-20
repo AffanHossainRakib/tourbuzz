@@ -10,12 +10,12 @@ const UserDashboard = () => {
     const [profileData, setProfileData] = useState({
         name: '',
         email: '',
-        password: '********',  // Password remains hidden
+        password: '********',  // Password remains hidden unless edited
     });
     const [isEditing, setIsEditing] = useState(false);
     const [selectedTour, setSelectedTour] = useState(null);
     const [newEmail, setNewEmail] = useState('');  // New state for new email
-    const [newPassword, setNewPassword] = useState('');  // New state for new password
+    const [newPassword, setNewPassword] = useState('********');  // New state for new password
     const navigate = useNavigate();
 
     // Base URL for the backend server
@@ -58,11 +58,30 @@ const UserDashboard = () => {
     };
 
     const handleSaveProfile = async () => {
+        // Prepare the data to send
+        const updateData = {};
+
+        // Check if the email was modified
+        if (newEmail !== profileData.email) {
+            updateData.newEmail = newEmail;
+        }
+
+        // Check if the password was modified
+        if (newPassword !== '********') {
+            updateData.newPassword = newPassword;
+        }
+
+        // If no fields were modified, skip the update
+        if (Object.keys(updateData).length === 0) {
+            alert("No changes made to update.");
+            return;
+        }
+
         try {
+            // Send the modified fields to the server
             const response = await axios.post(`${serverBaseUrl}/UpdateUserProfile`, {
                 email: profileData.email,  // Send the current email to identify the user
-                newEmail,
-                newPassword: newPassword !== '********' ? newPassword : null,  // Only update if a new password is provided
+                ...updateData  // Only send the modified fields
             });
 
             if (response.data.success) {
@@ -162,7 +181,7 @@ const UserDashboard = () => {
                                     <input 
                                         type="password"
                                         name="password"
-                                        value={newPassword || '********'}  // Only set if there's a new password
+                                        value={newPassword}  // Only set if there's a new password
                                         onChange={handleProfileChange}
                                         disabled={!isEditing}
                                         className="w-full px-4 py-2 border rounded-lg bg-gray-700 text-white focus:outline-none"

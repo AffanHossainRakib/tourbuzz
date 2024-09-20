@@ -185,6 +185,21 @@ const UpdateTour = async (
 };
 
 
+const UpdateTourSeats = async (id, available_seats, status) => {
+    const query = `
+        UPDATE tours 
+        SET available_seats = ?, status = ?
+        WHERE id = ?
+    `;
+
+    try {
+        await executeQuery(query, [available_seats, status, id]);
+    } catch (err) {
+        console.error('Error updating tour seats and status:', err);
+        throw err;
+    }
+};
+
 
 
 const GetBookingsByTourId = (tourId) => {
@@ -235,6 +250,12 @@ const DeleteTour = async (id) => {
 
 
 
+// dbQueries.js
+
+const GetTourById = async (id) => {
+    const query = `SELECT * FROM tours WHERE id = ?`;
+    return executeQuery(query, [id]);  // Use the executeQuery helper to run the query with the ID
+};
 
 
 // Tour Guide CRUD Operations
@@ -302,17 +323,9 @@ const GetTourGuideById = async (id) => {
 
 // Tour Bookings CRUD Operations
 
-const CreateTourBooking = (user_id, tour_id, seats_booked) => {
-    const query = `INSERT INTO tour_bookings (user_id, tour_id, seats_booked) VALUES (?, ?, ?)`;
-    return executeQuery(query, [user_id, tour_id, seats_booked]);
-};
 
 // Payments CRUD Operations
 
-const CreatePayment = (booking_id, amount, payment_status) => {
-    const query = `INSERT INTO payments (booking_id, amount, payment_status) VALUES (?, ?, ?)`;
-    return executeQuery(query, [booking_id, amount, payment_status]);
-};
 
 // Admin Tour Creation Log
 
@@ -369,6 +382,33 @@ const UploadMedia = async (files) => {
     }
 };
 
+const CreateTourBooking = async (user_id, tour_id, seats_booked, connection) => {
+    const query = `
+        INSERT INTO tour_bookings (user_id, tour_id, seats_booked) 
+        VALUES (?, ?, ?)
+    `;
+    try {
+        const [result] = await connection.query(query, [user_id, tour_id, seats_booked]);
+        return result;
+    } catch (err) {
+        console.error('Error creating tour booking:', err);
+        throw err;
+    }
+};
+
+// Function to create a payment in the payments table
+const CreatePayment = async (booking_id, amount, payment_status, connection) => {
+    const query = `
+        INSERT INTO payments (booking_id, amount, payment_status)
+        VALUES (?, ?, ?)
+    `;
+    try {
+        await connection.query(query, [booking_id, amount, payment_status]);
+    } catch (err) {
+        console.error('Error creating payment:', err);
+        throw err;
+    }
+};
 
 
 // Exporting functions
@@ -395,4 +435,6 @@ module.exports = {
     DeleteMedia,
     GetBookingsByTourId,
     UpdateUserProfile,
+    GetTourById,
+    UpdateTourSeats
 };
