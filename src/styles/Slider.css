@@ -1,0 +1,7 @@
+/* src/styles/Slider.css */
+.slider {
+    display: flex;
+    overflow: hidden;
+    width: 100%;
+    height: 300px;
+}

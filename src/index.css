@@ -1,0 +1,163 @@
+/* src/index.css or src/tailwind.css */
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/* Apply the 'font-sans' class globally to use 'Poppins' */
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ----------------------------
+    Custom Animations and Styles
+---------------------------- */
+
+/* Slide Up Animation */
+@keyframes slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 1s ease-in-out forwards;
+}
+
+/* Text Glow Effect on Hover */
+@keyframes glow {
+  0%, 100% {
+    text-shadow: 0 0 5px #fff, 0 0 10px #00f, 0 0 15px #00f, 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff, 0 0 50px #0ff;
+    color: #fff;
+  }
+  50% {
+    text-shadow: 0 0 10px #fff, 0 0 20px #00f, 0 0 30px #00f, 0 0 40px #0ff, 0 0 50px #0ff, 0 0 60px #0ff, 0 0 70px #0ff;
+    color: #00f;
+  }
+}
+
+/* Apply this class for hover effect */
+.hover\\:animate-glow:hover {
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
+/* Text Glow Effect */
+@keyframes text-glow {
+  0%, 100% {
+    text-shadow: 0 0 5px #fff, 0 0 10px #00f, 0 0 15px #00f, 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff, 0 0 50px #0ff;
+    color: #fff;
+  }
+  50% {
+    text-shadow: 0 0 10px #fff, 0 0 20px #00f, 0 0 30px #00f, 0 0 40px #0ff, 0 0 50px #0ff, 0 0 60px #0ff, 0 0 70px #0ff;
+    color: #00f;
+  }
+}
+
+/* Applied to elements that need text glow */
+.glow-text {
+  @apply text-3xl font-bold text-white mb-4;
+  animation: text-glow 1.5s infinite alternate;
+}
+
+/* Input Glow Effect */
+@keyframes input-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #1CB0EE, 0 0 30px #1CB0EE, 0 0 40px #1CB0EE;
+  }
+  50% {
+    box-shadow: 0 0 10px #fff, 0 0 20px #1CB0EE, 0 0 30px #1CB0EE, 0 0 40px #1CB0EE, 0 0 50px #1CB0EE;
+  }
+}
+
+/* Applied to input fields */
+.glow-input {
+  animation: input-glow 1.5s infinite alternate;
+}
+
+/* Slide In Animations for Login/Signup Forms */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Apply these classes to elements for sliding animations */
+.slide-in-right {
+  animation: slideInRight 0.5s forwards;
+}
+
+.slide-in-left {
+  animation: slideInLeft 0.5s forwards;
+}
+
+/* Backdrop and Overlay Styles for Tour Details */
+.backdrop {
+  @apply fixed inset-0 bg-black bg-opacity-70 z-50 flex justify-center items-center;
+}
+
+.overlay-container {
+  @apply bg-white w-3/4 lg:w-1/2 h-3/4 overflow-auto rounded-lg shadow-lg relative animate-slide-up;
+}
+
+/* Sticky Footer for "Book Now" Button */
+.sticky-footer {
+  @apply sticky bottom-0 bg-white bg-opacity-90 p-4 shadow-lg;
+}
+
+/* Back Button Style */
+.back-button {
+  @apply absolute top-4 left-4 bg-black bg-opacity-70 text-white w-10 h-10 flex items-center justify-center rounded-full hover:bg-opacity-80;
+}
+
+/* ----------------------------
+    New Custom Styles for Overlay, Media Button, and Search Dropdown
+---------------------------- */
+
+/* Make the overlay content scrollable */
+.overlay-content {
+  @apply max-h-screen overflow-y-auto;
+}
+
+/* Hide the navbar when the overlay is open */
+.navbar-hidden {
+  display: none;
+}
+
+/* Search Input Styles */
+.search-input {
+  @apply w-full p-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+/* Tour Item Styles */
+.tour-item {
+  @apply p-4 border-b border-gray-200 flex justify-between items-center;
+}
+
+.tour-item button {
+  @apply bg-blue-500 text-white px-3 py-1 rounded-full hover:bg-blue-600;
+}
+
+/* Media Button */
+.media-button {
+  @apply bg-blue-600 text-white px-4 py-2 rounded-full mt-4 hover:bg-blue-700;
+}
