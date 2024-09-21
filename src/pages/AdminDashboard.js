@@ -7,7 +7,7 @@ import ViewUsers from '../components/Users/ViewUsers';
 import ManageMedia from '../components/Media/ManageMedia';
 import ViewBookings from '../components/Bookings/ViewBookings';
 import ViewTransactions from '../components/Transactions/ViewTransactions';  
-import { FaSuitcase, FaEdit, FaUserTie, FaUserEdit, FaUsers, FaCamera, FaMoneyCheck, FaSignOutAlt, FaBook } from 'react-icons/fa'; 
+import { FaSuitcase, FaEdit, FaUserTie, FaUserEdit, FaUsers, FaCamera, FaMoneyCheck, FaSignOutAlt, FaBook, FaHome } from 'react-icons/fa'; 
 import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
@@ -24,6 +24,10 @@ const AdminDashboard = () => {
         navigate('/');
     };
 
+    const handleHomeClick = () => {
+        navigate('/');
+    };
+
     return (
         <div
             className="relative min-h-screen bg-cover bg-center bg-fixed"
@@ -35,6 +39,13 @@ const AdminDashboard = () => {
                 {/* Sidebar */}
                 <div className="w-64 bg-gray-900 bg-opacity-90 backdrop-blur-md text-white p-6 rounded-lg h-fit flex-shrink-0">
                     <ul className="space-y-6">
+                        <li
+                            className="cursor-pointer flex items-center space-x-3 p-3 rounded-md bg-blue-600 hover:bg-blue-700 transition"
+                            onClick={handleHomeClick}
+                        >
+                            <FaHome />
+                            <span>Home</span>
+                        </li>
                         <li
                             className={`cursor-pointer flex items-center space-x-3 p-3 rounded-md transition ${
                                 activeTab === 'createTour' ? 'bg-indigo-600 font-semibold shadow-lg' : 'hover:bg-gray-700'
